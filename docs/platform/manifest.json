@@ -1,0 +1,889 @@
+{
+  "description": "Official documentation and policies for every channel tcgsouq-social publishes to or reads from. Re-fetch with scripts/fetch_platform_docs.py.",
+  "pages": [
+    {
+      "platform": "meta-policy",
+      "slug": "platform-terms",
+      "url": "https://developers.facebook.com/terms/",
+      "title": "Meta Platform Terms"
+    },
+    {
+      "platform": "meta-policy",
+      "slug": "developer-policies",
+      "url": "https://developers.facebook.com/devpolicy/",
+      "title": "Meta Developer Policies"
+    },
+    {
+      "platform": "meta-policy",
+      "slug": "community-standards",
+      "url": "https://transparency.meta.com/policies/community-standards/",
+      "title": "Meta Community Standards"
+    },
+    {
+      "platform": "meta-policy",
+      "slug": "advertising-standards",
+      "url": "https://transparency.meta.com/policies/ad-standards/",
+      "title": "Meta Advertising Standards"
+    },
+    {
+      "platform": "meta-policy",
+      "slug": "commerce-policies",
+      "url": "https://www.facebook.com/policies_center/commerce",
+      "title": "Meta Commerce Policies"
+    },
+    {
+      "platform": "meta-policy",
+      "slug": "pages-groups-events-policies",
+      "url": "https://www.facebook.com/policies/pages_groups_events/",
+      "title": "Pages, Groups and Events Policies"
+    },
+    {
+      "platform": "meta-policy",
+      "slug": "branded-content-policies",
+      "url": "https://www.facebook.com/policies/brandedcontent/",
+      "title": "Branded Content Policies"
+    },
+    {
+      "platform": "meta-policy",
+      "slug": "instagram-community-guidelines",
+      "url": "https://help.instagram.com/477434105621119",
+      "title": "Instagram Community Guidelines"
+    },
+    {
+      "platform": "meta-policy",
+      "slug": "instagram-terms-of-use",
+      "url": "https://help.instagram.com/581066165581870",
+      "title": "Instagram Terms of Use"
+    },
+    {
+      "platform": "meta-policy",
+      "slug": "business-verification-help",
+      "url": "https://www.facebook.com/business/help/2058515294227817",
+      "title": "Business verification (Help Center)"
+    },
+    {
+      "platform": "meta-graph-api",
+      "slug": "access-levels",
+      "url": "https://developers.facebook.com/docs/graph-api/overview/access-levels",
+      "title": "Access levels (standard vs advanced)"
+    },
+    {
+      "platform": "meta-graph-api",
+      "slug": "app-modes",
+      "url": "https://developers.facebook.com/docs/development/build-and-test/app-modes",
+      "title": "App modes (development vs live)"
+    },
+    {
+      "platform": "meta-graph-api",
+      "slug": "app-roles",
+      "url": "https://developers.facebook.com/docs/development/build-and-test/app-roles",
+      "title": "App roles"
+    },
+    {
+      "platform": "meta-graph-api",
+      "slug": "rate-limiting",
+      "url": "https://developers.facebook.com/docs/graph-api/overview/rate-limiting",
+      "title": "Rate limits"
+    },
+    {
+      "platform": "meta-graph-api",
+      "slug": "error-handling",
+      "url": "https://developers.facebook.com/docs/graph-api/guides/error-handling",
+      "title": "Error handling"
+    },
+    {
+      "platform": "meta-graph-api",
+      "slug": "changelog",
+      "url": "https://developers.facebook.com/docs/graph-api/changelog",
+      "title": "Graph API changelog and versions"
+    },
+    {
+      "platform": "meta-graph-api",
+      "slug": "webhooks-getting-started",
+      "url": "https://developers.facebook.com/docs/graph-api/webhooks/getting-started",
+      "title": "Webhooks getting started"
+    },
+    {
+      "platform": "meta-graph-api",
+      "slug": "resumable-upload",
+      "url": "https://developers.facebook.com/docs/graph-api/guides/upload",
+      "title": "Resumable Upload API"
+    },
+    {
+      "platform": "meta-graph-api",
+      "slug": "facebook-login-for-business",
+      "url": "https://developers.facebook.com/docs/facebook-login/facebook-login-for-business",
+      "title": "Facebook Login for Business"
+    },
+    {
+      "platform": "meta-graph-api",
+      "slug": "long-lived-tokens",
+      "url": "https://developers.facebook.com/docs/facebook-login/guides/access-tokens/get-long-lived",
+      "title": "Long-lived access tokens"
+    },
+    {
+      "platform": "meta-graph-api",
+      "slug": "auth-vs-data-access",
+      "url": "https://developers.facebook.com/docs/facebook-login/auth-vs-data",
+      "title": "Data access expiration (90 days)"
+    },
+    {
+      "platform": "meta-graph-api",
+      "slug": "system-user-tokens",
+      "url": "https://developers.facebook.com/docs/business-management-apis/system-users/install-apps-and-generate-tokens/",
+      "title": "System users: generate tokens"
+    },
+    {
+      "platform": "meta-graph-api",
+      "slug": "web-crawlers",
+      "url": "https://developers.facebook.com/docs/sharing/webmasters/web-crawlers/",
+      "title": "Meta web crawlers (user agents)"
+    },
+    {
+      "platform": "meta-graph-api",
+      "slug": "marketing-api-overview",
+      "url": "https://developers.facebook.com/docs/marketing-api/overview",
+      "title": "Marketing API overview"
+    },
+    {
+      "platform": "meta-graph-api",
+      "slug": "marketing-api-authorization",
+      "url": "https://developers.facebook.com/docs/marketing-api/overview/authorization",
+      "title": "Marketing API authorization and access tiers"
+    },
+    {
+      "platform": "meta-graph-api",
+      "slug": "marketing-api-get-started",
+      "url": "https://developers.facebook.com/docs/marketing-api/get-started",
+      "title": "Marketing API get started"
+    },
+    {
+      "platform": "instagram",
+      "slug": "overview",
+      "url": "https://developers.facebook.com/docs/instagram-platform/overview",
+      "title": "Instagram Platform overview"
+    },
+    {
+      "platform": "instagram",
+      "slug": "platform-home",
+      "url": "https://developers.facebook.com/docs/instagram-platform",
+      "title": "Instagram Platform home"
+    },
+    {
+      "platform": "instagram",
+      "slug": "changelog",
+      "url": "https://developers.facebook.com/docs/instagram-platform/changelog",
+      "title": "Instagram Platform changelog"
+    },
+    {
+      "platform": "instagram",
+      "slug": "content-publishing",
+      "url": "https://developers.facebook.com/docs/instagram-platform/content-publishing",
+      "title": "Content publishing"
+    },
+    {
+      "platform": "instagram",
+      "slug": "ig-user-media",
+      "url": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+      "title": "IG User media (container specs)"
+    },
+    {
+      "platform": "instagram",
+      "slug": "ig-user-media-publish",
+      "url": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media_publish",
+      "title": "IG User media_publish"
+    },
+    {
+      "platform": "instagram",
+      "slug": "content-publishing-limit",
+      "url": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/content_publishing_limit",
+      "title": "content_publishing_limit"
+    },
+    {
+      "platform": "instagram",
+      "slug": "ig-media-insights",
+      "url": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-media/insights",
+      "title": "IG Media insights"
+    },
+    {
+      "platform": "instagram",
+      "slug": "ig-user-insights",
+      "url": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/insights",
+      "title": "IG User insights"
+    },
+    {
+      "platform": "instagram",
+      "slug": "ig-media",
+      "url": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-media",
+      "title": "IG Media object"
+    },
+    {
+      "platform": "instagram",
+      "slug": "ig-hashtag-search",
+      "url": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-hashtag-search",
+      "title": "Hashtag search"
+    },
+    {
+      "platform": "instagram",
+      "slug": "ig-media-comments",
+      "url": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-media/comments",
+      "title": "IG Media comments (first comment)"
+    },
+    {
+      "platform": "instagram",
+      "slug": "api-with-instagram-login",
+      "url": "https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login",
+      "title": "Instagram API with Instagram Login"
+    },
+    {
+      "platform": "instagram",
+      "slug": "business-login",
+      "url": "https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/business-login",
+      "title": "Business Login for Instagram"
+    },
+    {
+      "platform": "instagram",
+      "slug": "api-with-facebook-login",
+      "url": "https://developers.facebook.com/docs/instagram-platform/instagram-api-with-facebook-login",
+      "title": "Instagram API with Facebook Login"
+    },
+    {
+      "platform": "instagram",
+      "slug": "webhooks",
+      "url": "https://developers.facebook.com/docs/instagram-platform/webhooks",
+      "title": "Instagram webhooks"
+    },
+    {
+      "platform": "facebook-pages",
+      "slug": "getting-started",
+      "url": "https://developers.facebook.com/docs/pages-api/getting-started",
+      "title": "Pages API getting started"
+    },
+    {
+      "platform": "facebook-pages",
+      "slug": "posts",
+      "url": "https://developers.facebook.com/docs/pages-api/posts",
+      "title": "Pages API: posts"
+    },
+    {
+      "platform": "facebook-pages",
+      "slug": "page-feed",
+      "url": "https://developers.facebook.com/docs/graph-api/reference/page/feed/",
+      "title": "Page /feed reference"
+    },
+    {
+      "platform": "facebook-pages",
+      "slug": "page-photos",
+      "url": "https://developers.facebook.com/docs/graph-api/reference/page/photos/",
+      "title": "Page /photos reference"
+    },
+    {
+      "platform": "facebook-pages",
+      "slug": "page-videos",
+      "url": "https://developers.facebook.com/docs/graph-api/reference/page/videos/",
+      "title": "Page /videos reference"
+    },
+    {
+      "platform": "facebook-pages",
+      "slug": "video-upload-limits",
+      "url": "https://developers.facebook.com/docs/graph-api/reference/video-upload-limits/",
+      "title": "Video upload limits"
+    },
+    {
+      "platform": "facebook-pages",
+      "slug": "reels-publishing",
+      "url": "https://developers.facebook.com/docs/video-api/guides/reels-publishing",
+      "title": "Reels publishing"
+    },
+    {
+      "platform": "facebook-pages",
+      "slug": "page-stories-api",
+      "url": "https://developers.facebook.com/docs/page-stories-api",
+      "title": "Page Stories API"
+    },
+    {
+      "platform": "facebook-pages",
+      "slug": "page-insights",
+      "url": "https://developers.facebook.com/docs/graph-api/reference/page/insights/",
+      "title": "Page insights reference"
+    },
+    {
+      "platform": "facebook-pages",
+      "slug": "deprecated-metrics",
+      "url": "https://developers.facebook.com/docs/platforminsights/page/deprecated-metrics",
+      "title": "Deprecated Page insights metrics"
+    },
+    {
+      "platform": "facebook-pages",
+      "slug": "page-insights-updates-2025",
+      "url": "https://developers.facebook.com/blog/post/2025/08/15/page-insights-api-updates/",
+      "title": "Blog: Page Insights API updates (Aug 2025)"
+    },
+    {
+      "platform": "facebook-pages",
+      "slug": "all-videos-are-reels-help",
+      "url": "https://www.facebook.com/help/1570724596499071",
+      "title": "Help: all Facebook videos are Reels"
+    },
+    {
+      "platform": "threads",
+      "slug": "overview",
+      "url": "https://developers.facebook.com/docs/threads",
+      "title": "Threads API overview"
+    },
+    {
+      "platform": "threads",
+      "slug": "get-started",
+      "url": "https://developers.facebook.com/docs/threads/get-started",
+      "title": "Threads API get started"
+    },
+    {
+      "platform": "threads",
+      "slug": "posts",
+      "url": "https://developers.facebook.com/docs/threads/posts",
+      "title": "Threads posts"
+    },
+    {
+      "platform": "threads",
+      "slug": "insights",
+      "url": "https://developers.facebook.com/docs/threads/insights",
+      "title": "Threads insights"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "overview",
+      "url": "https://developers.google.com/my-business/content/overview",
+      "title": "Business Profile APIs overview"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "prereqs",
+      "url": "https://developers.google.com/my-business/content/prereqs",
+      "title": "Prerequisites"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "basic-setup",
+      "url": "https://developers.google.com/my-business/content/basic-setup",
+      "title": "Basic setup"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "accounts",
+      "url": "https://developers.google.com/my-business/content/accounts",
+      "title": "Accounts"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "implement-oauth",
+      "url": "https://developers.google.com/my-business/content/implement-oauth",
+      "title": "OAuth"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "limits",
+      "url": "https://developers.google.com/my-business/content/limits",
+      "title": "Usage limits"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "faq",
+      "url": "https://developers.google.com/my-business/content/faq",
+      "title": "FAQ"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "sunset-dates",
+      "url": "https://developers.google.com/my-business/content/sunset-dates",
+      "title": "Deprecation schedule"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "latest-updates",
+      "url": "https://developers.google.com/my-business/content/latest-updates",
+      "title": "Latest updates"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "change-log",
+      "url": "https://developers.google.com/my-business/content/change-log",
+      "title": "Change log"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "performance-change-log",
+      "url": "https://developers.google.com/my-business/content/performance/change-log",
+      "title": "Performance API change log"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "posts-data",
+      "url": "https://developers.google.com/my-business/content/posts-data",
+      "title": "Work with local posts"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "upload-photos",
+      "url": "https://developers.google.com/my-business/content/upload-photos",
+      "title": "Upload photos"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "notification-setup",
+      "url": "https://developers.google.com/my-business/content/notification-setup",
+      "title": "Notifications setup"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "localPosts-reference",
+      "url": "https://developers.google.com/my-business/reference/rest/v4/accounts.locations.localPosts",
+      "title": "localPosts REST reference"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "media-reference",
+      "url": "https://developers.google.com/my-business/reference/rest/v4/accounts.locations.media",
+      "title": "media REST reference"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "v4-rpc-reference",
+      "url": "https://developers.google.com/my-business/reference/rpc/google.mybusiness.v4",
+      "title": "v4 RPC reference (LocalPost fields)"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "error-codes",
+      "url": "https://developers.google.com/my-business/reference/rest/Shared.Types/ErrorCode",
+      "title": "Error codes"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "performance-api",
+      "url": "https://developers.google.com/my-business/reference/performance/rest",
+      "title": "Performance API reference"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "performance-daily-metric",
+      "url": "https://developers.google.com/my-business/reference/performance/rest/v1/DailyMetric",
+      "title": "DailyMetric enum"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "performance-fetch-multi",
+      "url": "https://developers.google.com/my-business/reference/performance/rest/v1/locations/fetchMultiDailyMetricsTimeSeries",
+      "title": "fetchMultiDailyMetricsTimeSeries"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "accounts-list",
+      "url": "https://developers.google.com/my-business/reference/accountmanagement/rest/v1/accounts/list",
+      "title": "accounts.list"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "locations-list",
+      "url": "https://developers.google.com/my-business/reference/businessinformation/rest/v1/accounts.locations/list",
+      "title": "accounts.locations.list"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "help-posts",
+      "url": "https://support.google.com/business/answer/7342169?hl=en",
+      "title": "Help: create and manage posts"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "help-posts-content-policy",
+      "url": "https://support.google.com/business/answer/7213077?hl=en",
+      "title": "Help: photos, videos and posts content policy"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "help-photo-video-requirements",
+      "url": "https://support.google.com/business/answer/6103862?hl=en",
+      "title": "Help: photo and video requirements"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "help-api-overview",
+      "url": "https://support.google.com/business/answer/6333473?hl=en",
+      "title": "Help: Business Profile APIs"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "help-prohibited-restricted-content",
+      "url": "https://support.google.com/contributionpolicy/answer/7400114?hl=en",
+      "title": "Help: prohibited and restricted content"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "oauth-app-audience",
+      "url": "https://support.google.com/cloud/answer/15549945?hl=en",
+      "title": "Cloud: manage OAuth app audience (testing vs production)"
+    },
+    {
+      "platform": "google-business-profile",
+      "slug": "oauth-sensitive-scope-verification",
+      "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+      "title": "OAuth sensitive scope verification"
+    },
+    {
+      "platform": "youtube",
+      "slug": "getting-started",
+      "url": "https://developers.google.com/youtube/v3/getting-started",
+      "title": "Data API getting started (quota)"
+    },
+    {
+      "platform": "youtube",
+      "slug": "quota-cost",
+      "url": "https://developers.google.com/youtube/v3/determine_quota_cost",
+      "title": "Quota costs"
+    },
+    {
+      "platform": "youtube",
+      "slug": "videos-insert",
+      "url": "https://developers.google.com/youtube/v3/docs/videos/insert",
+      "title": "videos.insert"
+    },
+    {
+      "platform": "youtube",
+      "slug": "quota-and-compliance-audits",
+      "url": "https://developers.google.com/youtube/v3/guides/quota_and_compliance_audits",
+      "title": "Quota and compliance audits"
+    },
+    {
+      "platform": "youtube",
+      "slug": "api-services-terms",
+      "url": "https://developers.google.com/youtube/terms/api-services-terms-of-service",
+      "title": "API Services Terms of Service"
+    },
+    {
+      "platform": "youtube",
+      "slug": "developer-policies",
+      "url": "https://developers.google.com/youtube/terms/developer-policies",
+      "title": "Developer Policies"
+    },
+    {
+      "platform": "youtube",
+      "slug": "required-minimum-functionality",
+      "url": "https://developers.google.com/youtube/terms/required-minimum-functionality",
+      "title": "Required minimum functionality"
+    },
+    {
+      "platform": "youtube",
+      "slug": "help-shorts",
+      "url": "https://support.google.com/youtube/answer/10059070?hl=en",
+      "title": "Help: Shorts"
+    },
+    {
+      "platform": "youtube",
+      "slug": "help-video-metadata",
+      "url": "https://support.google.com/youtube/answer/57404?hl=en",
+      "title": "Help: titles, descriptions, tags"
+    },
+    {
+      "platform": "youtube",
+      "slug": "help-community-guidelines",
+      "url": "https://support.google.com/youtube/answer/9288567?hl=en",
+      "title": "Help: Community Guidelines"
+    },
+    {
+      "platform": "youtube",
+      "slug": "help-upload-formats",
+      "url": "https://support.google.com/youtube/answer/4603579?hl=en",
+      "title": "Help: supported file formats"
+    },
+    {
+      "platform": "tiktok",
+      "slug": "content-posting-get-started",
+      "url": "https://developers.tiktok.com/doc/content-posting-api-get-started",
+      "title": "Content Posting API get started"
+    },
+    {
+      "platform": "tiktok",
+      "slug": "content-posting-media-transfer",
+      "url": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+      "title": "Media transfer guide (specs)"
+    },
+    {
+      "platform": "tiktok",
+      "slug": "content-posting-direct-post",
+      "url": "https://developers.tiktok.com/doc/content-posting-api-reference-direct-post",
+      "title": "Direct post reference"
+    },
+    {
+      "platform": "tiktok",
+      "slug": "content-posting-photo-post",
+      "url": "https://developers.tiktok.com/doc/content-posting-api-reference-photo-post",
+      "title": "Photo post reference"
+    },
+    {
+      "platform": "tiktok",
+      "slug": "content-sharing-guidelines",
+      "url": "https://developers.tiktok.com/doc/content-sharing-guidelines",
+      "title": "Content sharing guidelines (audit requirements)"
+    },
+    {
+      "platform": "tiktok",
+      "slug": "scopes-overview",
+      "url": "https://developers.tiktok.com/doc/scopes-overview",
+      "title": "Scopes overview"
+    },
+    {
+      "platform": "tiktok",
+      "slug": "developer-terms",
+      "url": "https://www.tiktok.com/legal/page/global/tiktok-developer-terms-of-service/en",
+      "title": "TikTok Developer Terms of Service",
+      "note": "tiktok.com legal pages are rendered in the browser; capture manually if needed"
+    },
+    {
+      "platform": "tiktok",
+      "slug": "community-guidelines",
+      "url": "https://www.tiktok.com/community-guidelines/en/",
+      "title": "TikTok Community Guidelines",
+      "note": "Rendered in the browser; capture manually if needed"
+    },
+    {
+      "platform": "tiktok",
+      "slug": "branded-content-policy",
+      "url": "https://www.tiktok.com/legal/page/global/bc-policy/en",
+      "title": "TikTok Branded Content Policy"
+    },
+    {
+      "platform": "x",
+      "slug": "post-creation",
+      "url": "https://docs.x.com/x-api/posts/creation-of-a-post",
+      "title": "Create a post"
+    },
+    {
+      "platform": "x",
+      "slug": "media-upload-chunked",
+      "url": "https://docs.x.com/x-api/media/quickstart/media-upload-chunked",
+      "title": "Media upload (chunked)"
+    },
+    {
+      "platform": "x",
+      "slug": "pricing",
+      "url": "https://docs.x.com/x-api/getting-started/pricing",
+      "title": "X API pricing"
+    },
+    {
+      "platform": "x",
+      "slug": "rate-limits",
+      "url": "https://docs.x.com/x-api/fundamentals/rate-limits",
+      "title": "Rate limits"
+    },
+    {
+      "platform": "x",
+      "slug": "developer-agreement-and-policy",
+      "url": "https://developer.x.com/en/developer-terms/agreement-and-policy",
+      "title": "Developer Agreement and Policy"
+    },
+    {
+      "platform": "x",
+      "slug": "help-automation-rules",
+      "url": "https://help.x.com/en/rules-and-policies/x-automation",
+      "title": "Help: automation rules",
+      "note": "help.x.com blocks non-browser requests (Cloudflare); capture manually if needed"
+    },
+    {
+      "platform": "x",
+      "slug": "help-x-rules",
+      "url": "https://help.x.com/en/rules-and-policies/x-rules",
+      "title": "Help: the X Rules",
+      "note": "help.x.com blocks non-browser requests (Cloudflare); capture manually if needed"
+    },
+    {
+      "platform": "x",
+      "slug": "help-videos",
+      "url": "https://help.x.com/en/using-x/x-videos",
+      "title": "Help: video specs",
+      "note": "help.x.com blocks non-browser requests (Cloudflare); capture manually if needed"
+    },
+    {
+      "platform": "x",
+      "slug": "help-premium",
+      "url": "https://help.x.com/en/using-x/x-premium",
+      "title": "Help: X Premium limits",
+      "note": "help.x.com blocks non-browser requests (Cloudflare); capture manually if needed"
+    },
+    {
+      "platform": "canva",
+      "slug": "connect-overview",
+      "url": "https://www.canva.dev/docs/connect/",
+      "title": "Connect API overview"
+    },
+    {
+      "platform": "canva",
+      "slug": "creating-integrations",
+      "url": "https://www.canva.dev/docs/connect/creating-integrations/",
+      "title": "Creating integrations (public vs private)"
+    },
+    {
+      "platform": "canva",
+      "slug": "authentication",
+      "url": "https://www.canva.dev/docs/connect/authentication/",
+      "title": "Authentication (OAuth PKCE)"
+    },
+    {
+      "platform": "canva",
+      "slug": "scopes",
+      "url": "https://www.canva.dev/docs/connect/appendix/scopes/",
+      "title": "Scopes"
+    },
+    {
+      "platform": "canva",
+      "slug": "requests-responses",
+      "url": "https://www.canva.dev/docs/connect/api-requests-responses/",
+      "title": "Requests, responses, rate limits"
+    },
+    {
+      "platform": "canva",
+      "slug": "list-designs",
+      "url": "https://www.canva.dev/docs/connect/api-reference/designs/list-designs/",
+      "title": "List designs"
+    },
+    {
+      "platform": "canva",
+      "slug": "create-export-job",
+      "url": "https://www.canva.dev/docs/connect/api-reference/exports/create-design-export-job/",
+      "title": "Create export job"
+    },
+    {
+      "platform": "canva",
+      "slug": "get-export-job",
+      "url": "https://www.canva.dev/docs/connect/api-reference/exports/get-design-export-job/",
+      "title": "Get export job"
+    },
+    {
+      "platform": "canva",
+      "slug": "resize",
+      "url": "https://www.canva.dev/docs/connect/api-reference/resizes/create-design-resize-job/",
+      "title": "Resize design"
+    },
+    {
+      "platform": "canva",
+      "slug": "user-capabilities",
+      "url": "https://www.canva.dev/docs/connect/api-reference/users/get-user-capabilities/",
+      "title": "User capabilities"
+    },
+    {
+      "platform": "canva",
+      "slug": "submitting-integrations",
+      "url": "https://www.canva.dev/docs/connect/submitting-integrations/",
+      "title": "Submitting integrations"
+    },
+    {
+      "platform": "canva",
+      "slug": "webhooks",
+      "url": "https://www.canva.dev/docs/connect/webhooks/",
+      "title": "Webhooks"
+    },
+    {
+      "platform": "judgeme",
+      "slug": "api-spec",
+      "url": "https://judge.me/api/docs.yaml",
+      "title": "Judge.me OpenAPI spec (YAML)",
+      "note": "Saved verbatim; not converted"
+    },
+    {
+      "platform": "judgeme",
+      "slug": "using-the-api",
+      "url": "https://judge.me/help/en/articles/8409180-using-judge-me-api",
+      "title": "Help: using the API"
+    },
+    {
+      "platform": "judgeme",
+      "slug": "verifying-webhooks",
+      "url": "https://judge.me/help/en/articles/8299679-verifying-webhooks-from-judge-me",
+      "title": "Help: verifying webhooks"
+    },
+    {
+      "platform": "judgeme",
+      "slug": "sharing-reviews-on-social",
+      "url": "https://judge.me/help/en/articles/8314924-sharing-reviews-automatically-on-social-media",
+      "title": "Help: sharing reviews on social media"
+    },
+    {
+      "platform": "judgeme",
+      "slug": "terms",
+      "url": "https://judge.me/terms",
+      "title": "Terms of Service (reuse of reviews)"
+    },
+    {
+      "platform": "judgeme",
+      "slug": "content-policy",
+      "url": "https://judge.me/content-policy",
+      "title": "Reviewer content policy"
+    },
+    {
+      "platform": "shopify",
+      "slug": "marketingActivityUpsertExternal",
+      "url": "https://shopify.dev/docs/api/admin-graphql/2026-07/mutations/marketingActivityUpsertExternal",
+      "title": "marketingActivityUpsertExternal"
+    },
+    {
+      "platform": "shopify",
+      "slug": "marketingEngagementCreate",
+      "url": "https://shopify.dev/docs/api/admin-graphql/2026-07/mutations/marketingEngagementCreate",
+      "title": "marketingEngagementCreate"
+    },
+    {
+      "platform": "shopify",
+      "slug": "marketing-activities-guide",
+      "url": "https://shopify.dev/docs/apps/build/marketing/marketing-activities",
+      "title": "Marketing activities guide"
+    },
+    {
+      "platform": "shopify",
+      "slug": "marketing-performance-help",
+      "url": "https://help.shopify.com/en/manual/promoting-marketing/analyze-marketing/marketing-performance",
+      "title": "Help: marketing performance and attribution",
+      "note": "help.shopify.com serves a connection challenge to scripts; capture manually if needed"
+    },
+    {
+      "platform": "shopify",
+      "slug": "articleCreate",
+      "url": "https://shopify.dev/docs/api/admin-graphql/2026-07/mutations/articleCreate",
+      "title": "articleCreate"
+    },
+    {
+      "platform": "shopify",
+      "slug": "blogs-query",
+      "url": "https://shopify.dev/docs/api/admin-graphql/2026-07/queries/blogs",
+      "title": "blogs query"
+    },
+    {
+      "platform": "shopify",
+      "slug": "fileCreate",
+      "url": "https://shopify.dev/docs/api/admin-graphql/2026-07/mutations/fileCreate",
+      "title": "fileCreate"
+    },
+    {
+      "platform": "shopify",
+      "slug": "client-credentials-grant",
+      "url": "https://shopify.dev/docs/apps/build/authentication-authorization/client-credentials-grant",
+      "title": "Client credentials grant"
+    },
+    {
+      "platform": "shopify",
+      "slug": "app-distribution",
+      "url": "https://shopify.dev/docs/apps/launch/distribution",
+      "title": "App distribution types"
+    },
+    {
+      "platform": "shopify",
+      "slug": "access-scopes",
+      "url": "https://shopify.dev/docs/api/usage/access-scopes",
+      "title": "Access scopes"
+    },
+    {
+      "platform": "shopify",
+      "slug": "api-limits",
+      "url": "https://shopify.dev/docs/api/usage/limits",
+      "title": "API rate limits"
+    }
+  ]
+}
