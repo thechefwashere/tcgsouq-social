@@ -1,8 +1,8 @@
 # judgeme — official documentation snapshot
 
-Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC.
+Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC. Last checked: 2026-09-11T10:21:11Z.
 
-| Page | Source | Fetched | Status |
+| Page | Source | Content fetched | Status at last check |
 |---|---|---|---|
 | [Judge.me OpenAPI spec (YAML)](api-spec.md) | https://judge.me/api/docs.yaml | 2026-09-11T09:20:10Z | unchanged |
 | [Help: using the API](using-the-api.md) | https://judge.me/help/en/articles/8409180-using-judge-me-api | 2026-09-11T09:20:10Z | unchanged |

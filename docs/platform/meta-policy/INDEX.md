@@ -1,8 +1,8 @@
 # meta-policy — official documentation snapshot
 
-Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC.
+Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC. Last checked: 2026-09-11T10:21:11Z.
 
-| Page | Source | Fetched | Status |
+| Page | Source | Content fetched | Status at last check |
 |---|---|---|---|
 | [Meta Platform Terms](platform-terms.md) | https://developers.facebook.com/terms/ | 2026-09-11T10:10:27Z | unchanged |
 | [Meta Developer Policies](developer-policies.md) | https://developers.facebook.com/devpolicy/ | 2026-09-11T10:10:27Z | unchanged |

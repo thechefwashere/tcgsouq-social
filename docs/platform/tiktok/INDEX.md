@@ -1,8 +1,8 @@
 # tiktok — official documentation snapshot
 
-Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC.
+Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC. Last checked: 2026-09-11T10:21:11Z.
 
-| Page | Source | Fetched | Status |
+| Page | Source | Content fetched | Status at last check |
 |---|---|---|---|
 | [Content Posting API get started](content-posting-get-started.md) | https://developers.tiktok.com/doc/content-posting-api-get-started | 2026-09-11T09:20:10Z | unchanged |
 | [Media transfer guide (specs)](content-posting-media-transfer.md) | https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide | 2026-09-11T09:20:10Z | unchanged |

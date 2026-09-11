@@ -10,9 +10,10 @@ Each manifest entry: {"platform": "whatsapp", "slug": "messaging-limits",
 
 Output: docs/platform/<platform>/<slug>.md with a YAML front matter that records the
 source URL, the fetch timestamp, the HTTP status and a SHA-256 of the extracted text.
-On a re-run the file is rewritten only when the extracted text changed; the previous
-fetch date is kept in `previous_fetched_at` and the change is listed in CHANGES.md.
-An INDEX.md per platform lists every page with its last fetch date.
+On a re-run a file is rewritten only when the extracted text changed (the previous
+fetch date is kept in `previous_fetched_at` and the change is listed in CHANGES.md);
+unchanged files are left untouched. An INDEX.md per platform lists every page with the
+date its content was fetched and the date of the last check.
 
 Dependencies: beautifulsoup4, lxml, markdownify (pip install --user ...).
 """
@@ -199,15 +200,13 @@ def main():
         digest = hashlib.sha256(normalise(text).encode()).hexdigest()
         old_meta, old_body = read_existing(path)
         if old_meta and old_meta.get("sha256") == digest and not args.force:
-            # unchanged: refresh the checked date only
-            old_meta["last_checked_at"] = now
-            open(path, "w", encoding="utf-8").write(front_matter(old_meta) + "\n\n" + old_body.lstrip("\n"))
+            # unchanged: leave the file untouched; the index records the check
             index.setdefault(platform, []).append((entry, old_meta, "unchanged"))
             print(f"same {url}")
             continue
         meta = {
             "title": title, "source": url, "final_url": final_url,
-            "platform": platform, "fetched_at": now, "last_checked_at": now,
+            "platform": platform, "fetched_at": now,
             "previous_fetched_at": (old_meta or {}).get("fetched_at", ""),
             "http_status": status, "format": fmt, "sha256": digest,
         }
@@ -224,8 +223,8 @@ def main():
     # per-platform index
     for platform, rows in index.items():
         lines = [f"# {platform} — official documentation snapshot", "",
-                 "Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC.", "",
-                 "| Page | Source | Fetched | Status |", "|---|---|---|---|"]
+                 f"Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC. Last checked: {now}.", "",
+                 "| Page | Source | Content fetched | Status at last check |", "|---|---|---|---|"]
         for entry, meta, state in rows:
             lines.append(f"| [{entry.get('title') or entry['slug']}]({entry['slug']}.md) | {entry['url']} | {meta.get('fetched_at', '')} | {state} |")
         open(os.path.join(root, platform, "INDEX.md"), "w", encoding="utf-8").write("\n".join(lines) + "\n")

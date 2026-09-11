@@ -1,8 +1,8 @@
 # youtube — official documentation snapshot
 
-Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC.
+Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC. Last checked: 2026-09-11T10:21:11Z.
 
-| Page | Source | Fetched | Status |
+| Page | Source | Content fetched | Status at last check |
 |---|---|---|---|
 | [Data API getting started (quota)](getting-started.md) | https://developers.google.com/youtube/v3/getting-started | 2026-09-11T09:20:10Z | unchanged |
 | [Quota costs](quota-cost.md) | https://developers.google.com/youtube/v3/determine_quota_cost | 2026-09-11T09:20:10Z | unchanged |

@@ -1,8 +1,8 @@
 # x — official documentation snapshot
 
-Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC.
+Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC. Last checked: 2026-09-11T10:21:11Z.
 
-| Page | Source | Fetched | Status |
+| Page | Source | Content fetched | Status at last check |
 |---|---|---|---|
 | [Create a post](post-creation.md) | https://docs.x.com/x-api/posts/creation-of-a-post | 2026-09-11T09:20:10Z | unchanged |
 | [Media upload (chunked)](media-upload-chunked.md) | https://docs.x.com/x-api/media/quickstart/media-upload-chunked | 2026-09-11T09:20:10Z | unchanged |

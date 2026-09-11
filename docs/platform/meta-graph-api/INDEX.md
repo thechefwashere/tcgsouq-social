@@ -1,8 +1,8 @@
 # meta-graph-api — official documentation snapshot
 
-Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC.
+Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC. Last checked: 2026-09-11T10:21:11Z.
 
-| Page | Source | Fetched | Status |
+| Page | Source | Content fetched | Status at last check |
 |---|---|---|---|
 | [Access levels (standard vs advanced)](access-levels.md) | https://developers.facebook.com/docs/graph-api/overview/access-levels | 2026-09-11T09:20:10Z | unchanged |
 | [App modes (development vs live)](app-modes.md) | https://developers.facebook.com/docs/development/build-and-test/app-modes | 2026-09-11T09:20:10Z | unchanged |
@@ -10,7 +10,7 @@ Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC.
 | [Rate limits](rate-limiting.md) | https://developers.facebook.com/docs/graph-api/overview/rate-limiting | 2026-09-11T09:20:10Z | unchanged |
 | [Error handling](error-handling.md) | https://developers.facebook.com/docs/graph-api/guides/error-handling | 2026-09-11T09:20:10Z | unchanged |
 | [Graph API changelog and versions](changelog.md) | https://developers.facebook.com/docs/graph-api/changelog | 2026-09-11T09:20:10Z | unchanged |
-| [Webhooks getting started](webhooks-getting-started.md) | https://developers.facebook.com/docs/graph-api/webhooks/getting-started | 2026-09-11T10:17:58Z | CHANGED |
+| [Webhooks getting started](webhooks-getting-started.md) | https://developers.facebook.com/docs/graph-api/webhooks/getting-started | 2026-09-11T10:17:58Z | unchanged |
 | [Resumable Upload API](resumable-upload.md) | https://developers.facebook.com/docs/graph-api/guides/upload | 2026-09-11T09:20:10Z | unchanged |
 | [Facebook Login for Business](facebook-login-for-business.md) | https://developers.facebook.com/docs/facebook-login/facebook-login-for-business | 2026-09-11T09:20:10Z | unchanged |
 | [Long-lived access tokens](long-lived-tokens.md) | https://developers.facebook.com/docs/facebook-login/guides/access-tokens/get-long-lived | 2026-09-11T09:20:10Z | unchanged |

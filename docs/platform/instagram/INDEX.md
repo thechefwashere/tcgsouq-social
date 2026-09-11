@@ -1,8 +1,8 @@
 # instagram — official documentation snapshot
 
-Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC.
+Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC. Last checked: 2026-09-11T10:21:11Z.
 
-| Page | Source | Fetched | Status |
+| Page | Source | Content fetched | Status at last check |
 |---|---|---|---|
 | [Instagram Platform overview](overview.md) | https://developers.facebook.com/docs/instagram-platform/overview | 2026-09-11T09:20:10Z | unchanged |
 | [Instagram Platform home](platform-home.md) | https://developers.facebook.com/docs/instagram-platform | 2026-09-11T09:20:10Z | unchanged |
