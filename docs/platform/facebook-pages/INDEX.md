@@ -15,4 +15,4 @@ Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC.
 | [Page insights reference](page-insights.md) | https://developers.facebook.com/docs/graph-api/reference/page/insights/ | 2026-09-11T09:20:10Z | unchanged |
 | [Deprecated Page insights metrics](deprecated-metrics.md) | https://developers.facebook.com/docs/platforminsights/page/deprecated-metrics | 2026-09-11T09:20:10Z | unchanged |
 | [Blog: Page Insights API updates (Aug 2025)](page-insights-updates-2025.md) | https://developers.facebook.com/blog/post/2025/08/15/page-insights-api-updates/ | 2026-09-11T09:20:10Z | unchanged |
-| [Help: all Facebook videos are Reels](all-videos-are-reels-help.md) | https://www.facebook.com/help/1570724596499071 | 2026-09-11T09:20:10Z | unchanged |
+| [Help: all Facebook videos are Reels](all-videos-are-reels-help.md) | https://www.facebook.com/help/1570724596499071 | 2026-09-11T10:17:58Z | CHANGED |

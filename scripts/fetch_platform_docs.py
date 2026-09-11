@@ -109,6 +109,8 @@ def clean_markdown(text):
     # Facebook's outbound link wrapper carries a per-request token: unwrap it
     text = re.sub(r"https?://l\.facebook\.com/l\.php\?u=([^&)\s]+)[^)\s]*",
                   lambda m: unquote(m.group(1)), text)
+    # Meta CDN links carry signed, per-request query strings: keep the path only
+    text = re.sub(r"(https?://[a-z0-9.-]*fbcdn\.net/[^\s)?]+)\?[^\s)]*", r"\1", text)
     # drop login / tracking links and Meta's footer chrome
     lines = []
     for line in text.splitlines():

@@ -3,12 +3,12 @@ title: "Help: all Facebook videos are Reels"
 source: "https://www.facebook.com/help/1570724596499071"
 final_url: "https://www.facebook.com/help/1570724596499071"
 platform: "facebook-pages"
-fetched_at: "2026-09-11T09:20:10Z"
-last_checked_at: "2026-09-11T10:13:18Z"
-previous_fetched_at: ""
+fetched_at: "2026-09-11T10:17:58Z"
+last_checked_at: "2026-09-11T10:17:58Z"
+previous_fetched_at: "2026-09-11T09:20:10Z"
 http_status: "200"
 format: "html-converted"
-sha256: "851566d8560d42ba6fca87b2f780cc947160aa098b31daf4b24850fd30d9f686"
+sha256: "685f0ba5628ede34cfb9543a7e16d2f20e402f6d0b5ae3a70dbff5272f97aedd"
 ---
 
 # Embed a reel from Facebook onto a website
@@ -75,3 +75,7 @@ Related Articles
 Chat with Meta AI support assistant
 
 Resolve issues, make changes and get support in real time
+
+Get a call from Meta AI assistant
+
+Get support info from our AI support assistant by phone

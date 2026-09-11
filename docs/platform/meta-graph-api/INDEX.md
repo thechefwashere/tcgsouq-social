@@ -10,7 +10,7 @@ Fetched by `scripts/fetch_platform_docs.py` from the manifest. Dates are UTC.
 | [Rate limits](rate-limiting.md) | https://developers.facebook.com/docs/graph-api/overview/rate-limiting | 2026-09-11T09:20:10Z | unchanged |
 | [Error handling](error-handling.md) | https://developers.facebook.com/docs/graph-api/guides/error-handling | 2026-09-11T09:20:10Z | unchanged |
 | [Graph API changelog and versions](changelog.md) | https://developers.facebook.com/docs/graph-api/changelog | 2026-09-11T09:20:10Z | unchanged |
-| [Webhooks getting started](webhooks-getting-started.md) | https://developers.facebook.com/docs/graph-api/webhooks/getting-started | 2026-09-11T10:13:18Z | CHANGED |
+| [Webhooks getting started](webhooks-getting-started.md) | https://developers.facebook.com/docs/graph-api/webhooks/getting-started | 2026-09-11T10:17:58Z | CHANGED |
 | [Resumable Upload API](resumable-upload.md) | https://developers.facebook.com/docs/graph-api/guides/upload | 2026-09-11T09:20:10Z | unchanged |
 | [Facebook Login for Business](facebook-login-for-business.md) | https://developers.facebook.com/docs/facebook-login/facebook-login-for-business | 2026-09-11T09:20:10Z | unchanged |
 | [Long-lived access tokens](long-lived-tokens.md) | https://developers.facebook.com/docs/facebook-login/guides/access-tokens/get-long-lived | 2026-09-11T09:20:10Z | unchanged |

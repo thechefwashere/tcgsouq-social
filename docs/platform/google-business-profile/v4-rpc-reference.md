@@ -4,7 +4,7 @@ source: "https://developers.google.com/my-business/reference/rpc/google.mybusine
 final_url: "https://developers.google.com/my-business/reference/rpc/google.mybusiness.v4"
 platform: "google-business-profile"
 fetched_at: "2026-09-11T09:20:10Z"
-last_checked_at: "2026-09-11T10:13:18Z"
+last_checked_at: "2026-09-11T10:17:58Z"
 previous_fetched_at: ""
 http_status: "200"
 format: "html-converted"
