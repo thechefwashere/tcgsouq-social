@@ -1,0 +1,17 @@
+{
+  "name": "tcgsouq-hub",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "PokeSouq hub — capture and, later, publishing.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "healthcheck": "node src/run.js healthcheck",
+    "job": "node src/run.js"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
+  }
+}
