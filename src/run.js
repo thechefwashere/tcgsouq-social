@@ -4,6 +4,7 @@ import { closeDb } from './lib/db.js';
 
 const JOBS = {
   healthcheck: () => import('./jobs/healthcheck.js'),
+  status: () => import('./jobs/status.js'),
   'shopify-analytics': () => import('./jobs/shopify-analytics.js'),
   'shopify-orders': () => import('./jobs/shopify-orders.js'),
 };

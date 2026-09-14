@@ -12,6 +12,35 @@ const API_VERSION = process.env.SHOPIFY_API_VERSION || '2026-07';
 
 const MAX_ATTEMPTS = 5;
 
+/**
+ * This client is READ-ONLY, enforced here rather than by scopes.
+ *
+ * The token belongs to an existing app with full permissions, shared with another program.
+ * That is a deliberate, reasonable choice — but it means Shopify will happily execute a
+ * mutation this code sends by mistake, against the live store, with no second chance. A
+ * capture tool has no business writing to Shopify, so the client refuses to.
+ *
+ * Checked on the document text before it is sent. An operation is allowed only if it
+ * declares no mutation and no subscription: bare `{ ... }` and `query Name { ... }` pass,
+ * anything containing a mutation operation does not.
+ */
+function assertReadOnly(query) {
+  // Strip strings and comments first, so a mutation named inside a ShopifyQL string or a
+  // comment neither trips the guard nor hides one.
+  const stripped = query
+    .replace(/"""[\s\S]*?"""/g, '""')
+    .replace(/"(?:[^"\\\n]|\\.)*"/g, '""')
+    .replace(/#[^\n]*/g, '');
+
+  if (/\b(mutation|subscription)\b\s*[\w({]/.test(stripped)) {
+    throw new Error(
+      'Refusing to send a mutation. This client is read-only by design: the Shopify token ' +
+      'carries write scopes, so a stray mutation would hit the live store. If a write is ' +
+      'ever genuinely needed, it belongs in a separate, deliberate code path.'
+    );
+  }
+}
+
 function required(name) {
   const v = process.env[name];
   if (!v) throw new Error(`${name} is not set. See .env.example.`);
@@ -26,10 +55,14 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
  * why this cannot rely on status codes alone. Every response carries extensions.cost, so
  * back-off can be computed from the actual deficit rather than a blind guess.
  */
+export { assertReadOnly };
+
 export async function shopifyGraphQL(query, variables = {}) {
   const shop = required('SHOPIFY_SHOP');
   const token = required('SHOPIFY_ADMIN_TOKEN');
   const url = `https://${shop}/admin/api/${API_VERSION}/graphql.json`;
+
+  assertReadOnly(query);
 
   let lastError;
 

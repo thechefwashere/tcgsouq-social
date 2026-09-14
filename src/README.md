@@ -26,6 +26,25 @@ rows it managed to write, because the wrapper persists the failure before rethro
 | Job | Reads | Writes | Credentials |
 |---|---|---|---|
 | `healthcheck` | Postgres only | nothing (its own `ingest_runs` row) | `DATABASE_URL` |
+| `status` | Postgres only | nothing | `DATABASE_URL` |
+| `shopify-analytics` | ShopifyQL | `shopify_daily`, `shopify_referrer_daily` | + `SHOPIFY_SHOP`, `SHOPIFY_ADMIN_TOKEN` |
+| `shopify-orders` | Admin GraphQL | `orders` | + `SHOPIFY_SHOP`, `SHOPIFY_ADMIN_TOKEN` |
+
+`status` prints run history, `store_state` and row counts. It exists so questions about the
+database get answered from the database rather than from reading Railway's log pane, which
+interleaves container lifecycle lines and can make one clean run look like a restart loop.
+
+Both Shopify jobs re-pull a trailing window by default and upsert, so running them twice is
+repair, not duplication. `--since YYYY-MM-DD` forces a wider window; `--since 2023-05-01`
+rebuilds the whole history.
+
+### The Shopify token is write-capable, and the client refuses to use it that way
+
+The token comes from an existing full-permission app shared with another program. Shopify
+will execute a mutation this code sends by mistake, against the live store, with no undo.
+So `src/lib/shopify.js` inspects every operation before sending and throws on a `mutation`
+or `subscription` — scopes are not the safety net here, the client is. A write, if one is
+ever genuinely needed, belongs in a separate and deliberate code path.
 
 `healthcheck` is deliberately first and deliberately useless: it proves Railway can reach
 Supabase, the migration is applied and a job can write a row, using **no external
