@@ -136,7 +136,12 @@ export default async function watiContacts(ctx) {
   let seen = 0;
   let written = 0;
   let consentWritten = 0;
-  let unusablePhone = 0;
+  // A bare "unusable" count cannot be acted on. Split by cause: a contact with no phone at
+  // all is an Instagram or Messenger contact and is expected; a contact WITH a phone that
+  // will not normalise is a data problem worth looking at.
+  let noPhoneAtAll = 0;
+  let phoneUnparseable = 0;
+  const byChannel = new Map();
 
   for await (const { page, items } of watiPages('/api/ext/v3/contacts', {
     pageSize: PAGE_SIZE,
@@ -146,8 +151,15 @@ export default async function watiContacts(ctx) {
 
     const batch = [];
     for (const c of items) {
+      const channel = c.channel_type || 'unknown';
+      byChannel.set(channel, (byChannel.get(channel) ?? 0) + 1);
+
       const phone = contactPhone(c);
-      if (!phone) { unusablePhone++; continue; }
+      if (!phone) {
+        const hadSomething = [c.phone, c.wa_id].some((v) => v && String(v).trim() !== '');
+        if (hadSomething) phoneUnparseable++; else noPhoneAtAll++;
+        continue;
+      }
       batch.push({
         phone_e164: phone,
         wati_id: c.id ?? null,
@@ -172,7 +184,9 @@ export default async function watiContacts(ctx) {
   console.log(`  contacts seen     ${seen}`);
   console.log(`  contacts stored   ${written}`);
   console.log(`  consent events    ${consentWritten} new`);
-  console.log(`  unusable phone    ${unusablePhone}`);
+  console.log(`  skipped: no phone ${noPhoneAtAll}  (Instagram/Messenger contacts have none)`);
+  console.log(`  skipped: bad phone ${phoneUnparseable} (had a value that would not normalise)`);
+  console.log(`  by channel        ${[...byChannel].map(([k, v]) => `${k}=${v}`).join(' ')}`);
 
-  return { seen, written, consentWritten, unusablePhone };
+  return { seen, written, consentWritten, noPhoneAtAll, phoneUnparseable };
 }

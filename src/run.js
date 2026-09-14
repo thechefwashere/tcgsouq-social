@@ -10,6 +10,7 @@ const JOBS = {
   'wati-probe': () => import('./jobs/wati-probe.js'),
   'wati-contacts': () => import('./jobs/wati-contacts.js'),
   'wati-broadcasts': () => import('./jobs/wati-broadcasts.js'),
+  'wati-backfill': () => import('./jobs/wati-backfill.js'),
   nightly: () => import('./jobs/nightly.js'),
 };
 

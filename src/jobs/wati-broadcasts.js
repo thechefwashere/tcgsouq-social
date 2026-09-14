@@ -144,7 +144,9 @@ export default async function watiBroadcasts(ctx) {
 
   let broadcasts = 0;
   let messages = 0;
-  let unusablePhone = 0;
+  // Split by cause, for the same reason as in wati-contacts: these two mean different things.
+  let noPhone = 0;
+  let noMessageId = 0;
 
   for await (const { items } of watiPages('/api/ext/v3/broadcasts', {
     pageSize: PAGE_SIZE,
@@ -175,7 +177,9 @@ export default async function watiBroadcasts(ctx) {
           const phone = normalisePhone(r.contact_phone);
           // Without a message id there is no stable key, and without a phone there is no
           // identity — either way the row cannot join to anything, so it is counted not stored.
-          if (!phone || !r.message_id) { unusablePhone++; continue; }
+          if (!phone) { noPhone++; continue; }
+          // No message id means no stable key — a re-run would insert it again as a new row.
+          if (!r.message_id) { noMessageId++; continue; }
           const { delivered, failed } = classifyStatus(r.status);
           rows.push({
             id: r.message_id,
@@ -201,8 +205,9 @@ export default async function watiBroadcasts(ctx) {
 
   console.log(`  broadcasts      ${broadcasts}`);
   console.log(`  messages        ${messages}`);
-  console.log(`  unusable rows   ${unusablePhone}`);
+  console.log(`  skipped: no phone      ${noPhone}`);
+  console.log(`  skipped: no message id ${noMessageId}  (queued or never sent — no stable key)`);
   ctx.cursor = until;
 
-  return { since, until, broadcasts, messages, unusablePhone };
+  return { since, until, broadcasts, messages, noPhone, noMessageId };
 }
