@@ -884,6 +884,96 @@
       "slug": "api-limits",
       "url": "https://shopify.dev/docs/api/usage/limits",
       "title": "API rate limits"
+    },
+    {
+      "platform": "wati",
+      "slug": "authentication",
+      "url": "https://docs.wati.io/reference/authentication.md",
+      "title": "Authentication"
+    },
+    {
+      "platform": "wati",
+      "slug": "errors",
+      "url": "https://docs.wati.io/reference/errors.md",
+      "title": "Errors and rate limits"
+    },
+    {
+      "platform": "wati",
+      "slug": "get_api-ext-v3-broadcasts-overview",
+      "url": "https://docs.wati.io/reference/get_api-ext-v3-broadcasts-overview.md",
+      "title": "Campaign overview (analytics)"
+    },
+    {
+      "platform": "wati",
+      "slug": "get_api-ext-v3-broadcasts",
+      "url": "https://docs.wati.io/reference/get_api-ext-v3-broadcasts.md",
+      "title": "Get campaigns"
+    },
+    {
+      "platform": "wati",
+      "slug": "get_api-ext-v3-broadcasts-broadcast-id",
+      "url": "https://docs.wati.io/reference/get_api-ext-v3-broadcasts-broadcast-id.md",
+      "title": "Campaign detail"
+    },
+    {
+      "platform": "wati",
+      "slug": "get_api-ext-v3-broadcasts-broadcast-id-recipients",
+      "url": "https://docs.wati.io/reference/get_api-ext-v3-broadcasts-broadcast-id-recipients.md",
+      "title": "Campaign recipients"
+    },
+    {
+      "platform": "wati",
+      "slug": "post_api-ext-v3-broadcasts-estimate-cost",
+      "url": "https://docs.wati.io/reference/post_api-ext-v3-broadcasts-estimate-cost.md",
+      "title": "Estimate broadcast cost"
+    },
+    {
+      "platform": "wati",
+      "slug": "get_api-ext-v3-contacts",
+      "url": "https://docs.wati.io/reference/get_api-ext-v3-contacts.md",
+      "title": "Get contacts"
+    },
+    {
+      "platform": "wati",
+      "slug": "get_api-ext-v3-contacts-target",
+      "url": "https://docs.wati.io/reference/get_api-ext-v3-contacts-target.md",
+      "title": "Contact detail"
+    },
+    {
+      "platform": "wati",
+      "slug": "get_api-ext-v3-contacts-count",
+      "url": "https://docs.wati.io/reference/get_api-ext-v3-contacts-count.md",
+      "title": "Contact count"
+    },
+    {
+      "platform": "wati",
+      "slug": "get_api-ext-v3-conversations-target-messages",
+      "url": "https://docs.wati.io/reference/get_api-ext-v3-conversations-target-messages.md",
+      "title": "Get messages"
+    },
+    {
+      "platform": "wati",
+      "slug": "get_api-ext-v3-messagetemplates",
+      "url": "https://docs.wati.io/reference/get_api-ext-v3-messagetemplates.md",
+      "title": "Get message templates"
+    },
+    {
+      "platform": "wati",
+      "slug": "get_api-ext-v3-account-credits",
+      "url": "https://docs.wati.io/reference/get_api-ext-v3-account-credits.md",
+      "title": "Account credit balance"
+    },
+    {
+      "platform": "wati",
+      "slug": "post_api-v2-webhookendpoints",
+      "url": "https://docs.wati.io/reference/post_api-v2-webhookendpoints.md",
+      "title": "Create webhooks"
+    },
+    {
+      "platform": "wati",
+      "slug": "post_api-v1-rotatetoken",
+      "url": "https://docs.wati.io/reference/post_api-v1-rotatetoken.md",
+      "title": "Rotate token"
     }
   ]
 }
