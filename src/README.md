@@ -39,8 +39,9 @@ The service is a **one-shot job**, not a web service. `railway.json` sets
 restarted into a crash loop when it succeeds.
 
 1. New service in the Railway project → **GitHub repo** → `thechefwashere/tcgsouq-social`.
-2. Variables: `DATABASE_URL` is already a shared variable on the project; reference it on the
-   service. Nothing else is needed for `healthcheck`.
+2. Variables: a project shared variable is not inherited automatically. On the service's
+   **Variables** tab click **Shared Variable** and pick `DATABASE_URL` (equivalently, add
+   `DATABASE_URL=${{shared.DATABASE_URL}}`). Nothing else is needed for `healthcheck`.
 3. Deploy. The build is Nixpacks from `package.json`; `package-lock.json` is committed so
    `npm ci` is reproducible.
 4. Read the deploy logs. A healthy run prints the database name, server version, session
@@ -51,8 +52,26 @@ dashboard (Settings → Cron Schedule, UTC). Dubai is UTC+4, so 03:00 Dubai is `
 
 ## Connecting to Supabase
 
-`DATABASE_URL` comes from the Supabase project page → **Connect** button at the top → **Direct
-connection**, port 5432. Not from Settings → Database; it is not there.
+`DATABASE_URL` is the **Session pooler** string: Supabase project page → **Connect** button
+at the top → **Session pooler**, port 5432. Not Settings → Database; it is not there.
+
+**Not the Direct connection.** Supabase offers three strings and only the poolers work from
+Railway:
+
+| String | Host | IP |
+|---|---|---|
+| Direct | `db.<ref>.supabase.co:5432` | **IPv6 only** unless the project buys the IPv4 add-on |
+| Session pooler | `aws-N-<region>.pooler.supabase.com:5432` | IPv4 on every plan, full Postgres |
+| Transaction pooler | `aws-N-<region>.pooler.supabase.com:6543` | IPv4, but no prepared statements and no session state between transactions |
+
+Railway containers have no IPv6 egress, so the Direct string fails with `ENETUNREACH` — an
+error naming neither Supabase nor IPv6, which reads like a Railway outage. It cost one
+deploy on 14 Sep 2026. `src/lib/db.js` now refuses that host outright with an error that
+says what to use instead, and warns on `:6543` rather than letting bulk upserts quietly run
+without session state.
+
+Note the pooler username is `postgres.<project-ref>`, not `postgres`. Copy the whole string
+from the Connect dialog rather than editing the old one.
 
 The pool sets `ssl.rejectUnauthorized = false`. The connection is still encrypted; the
 certificate is not verified, because Supabase's CA is not in the container's trust store.
