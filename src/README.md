@@ -136,6 +136,24 @@ The host is pinned by the URL. Revisit if this ever connects to a database we do
 3. Register it in the `JOBS` map in `src/run.js`.
 4. Upsert on the natural key. Re-running a job must repair, never duplicate.
 
+## Wati's two APIs address the account differently
+
+The dashboard prints one URL. v1 and v3 do not use it the same way:
+
+| | URL |
+|---|---|
+| v1 | `https://live-mt-server.wati.io/<account>/api/v1/...` |
+| v3 | `https://live-mt-server.wati.io/api/ext/v3/...` — **no account number** |
+
+In v3 the token identifies the account. Probed against the live API on 14 Sep 2026: the v1
+path returns 401 (exists, wants auth), every v3 path WITH the account number returns 404,
+and all six v3 endpoints WITHOUT it return 401.
+
+A wrong v3 path answers with a bare 404 and an **empty body** — no message, nothing naming
+the cause. `WATI_API_URL` is therefore accepted exactly as the dashboard prints it and
+normalised in `src/lib/wati.js`, and a 404 raises an error that says what it almost always
+means rather than passing the silence on.
+
 ## What Wati can and cannot tell us
 
 This determines what the WhatsApp data is worth, so it is written down rather than

@@ -22,20 +22,35 @@ function required(name) {
 }
 
 /**
- * Every Wati account has its own server path: https://live-mt-server.wati.io/<tenant>.
+ * Wati's v1 and v3 APIs address accounts DIFFERENTLY, and the dashboard shows only one URL.
  *
- * Wati's dashboard shows that base URL in some places and a version-suffixed one in others,
- * so WATI_API_URL is accepted either way and normalised back to the bare tenant root. The
- * paths in this file supply their own `/api/ext/v3/...`, and a doubled version segment
- * would 404 with a message that names neither cause.
+ * v1 puts the account number in the path:  https://live-mt-server.wati.io/334873/api/v1/...
+ * v3 does not put it anywhere:             https://live-mt-server.wati.io/api/ext/v3/...
+ *
+ * In v3 the token identifies the account. Verified by probing both, 14 Sep 2026: the v1
+ * path returns 401 (exists, wants auth) while the same host WITH the account number returns
+ * 404 on every v3 path, and WITHOUT it returns 401 on all six. Keeping the number on a v3
+ * request produces a bare 404 with an empty body — no message, nothing naming the cause.
+ *
+ * So WATI_API_URL is accepted exactly as the dashboard prints it, and the account number
+ * and any version suffix are stripped here. Nobody has to know this to configure it.
  */
-function baseUrl() {
-  const raw = required('WATI_API_URL').trim().replace(/\/+$/, '');
-  return raw.replace(/\/api\/(ext\/)?v\d+$/i, '');
+export function watiBase(url) {
+  return url
+    .trim()
+    .replace(/\/+$/, '')
+    .replace(/\/api\/(ext\/)?v\d+.*$/i, '')  // a version suffix, if the URL carried one
+    .replace(/\/\d+$/, '');                   // the v1-style account number
 }
 
-export function _baseUrlForTest(url) {
-  return url.trim().replace(/\/+$/, '').replace(/\/api\/(ext\/)?v\d+$/i, '');
+/** The account number, if the configured URL carried one. Only v1 would need it. */
+export function watiAccountId(url) {
+  const m = /\/(\d+)\/?$/.exec(url.trim().replace(/\/api\/(ext\/)?v\d+.*$/i, ''));
+  return m ? m[1] : null;
+}
+
+function baseUrl() {
+  return watiBase(required('WATI_API_URL'));
 }
 
 export async function watiGet(path, params = {}) {
@@ -75,8 +90,20 @@ export async function watiGet(path, params = {}) {
       throw lastError;
     }
 
+    if (res.status === 404) {
+      // Wati answers a wrong v3 path with a bare 404 and an EMPTY body — no message, nothing
+      // naming the cause. Say what it almost always is instead of passing the silence on.
+      throw new Error(
+        `Wati returned 404 for ${path} at ${baseUrl()}.\n` +
+        'The v3 API takes no account number in the URL — the token identifies the account. ' +
+        `Check WATI_API_URL: it should resolve to https://live-mt-server.wati.io, not ` +
+        '.../<account-number>. The response body was empty, which is what this looks like.'
+      );
+    }
+
     if (!res.ok) {
-      throw new Error(`Wati returned ${res.status} for ${path}: ${(await res.text()).slice(0, 400)}`);
+      const body = (await res.text()).slice(0, 400);
+      throw new Error(`Wati returned ${res.status} for ${path}${body ? ': ' + body : ' (empty body)'}`);
     }
 
     return res.json();

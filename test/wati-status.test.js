@@ -22,18 +22,28 @@ test('an unknown or empty status claims nothing', () => {
   }
 });
 
-import { _baseUrlForTest as normaliseBase } from '../src/lib/wati.js';
+import { watiBase, watiAccountId } from '../src/lib/wati.js';
 
-test('the Wati base URL is accepted in every form the dashboard shows', () => {
-  const want = 'https://live-mt-server.wati.io/334873';
+test('the v3 base strips the account number and any version suffix', () => {
+  // v3 takes no account number: with it every path 404s with an empty body, without it they
+  // 401. Verified against the live API, 14 Sep 2026.
+  const want = 'https://live-mt-server.wati.io';
   for (const given of [
     'https://live-mt-server.wati.io/334873',
     'https://live-mt-server.wati.io/334873/',
     'https://live-mt-server.wati.io/334873/api/ext/v3',
     'https://live-mt-server.wati.io/334873/api/ext/v3/',
     'https://live-mt-server.wati.io/334873/api/v1',
+    'https://live-mt-server.wati.io/api/ext/v3',
+    'https://live-mt-server.wati.io',
     '  https://live-mt-server.wati.io/334873  ',
   ]) {
-    assert.equal(normaliseBase(given), want, given);
+    assert.equal(watiBase(given), want, given);
   }
+});
+
+test('the account number is still recoverable, for v1 if it is ever needed', () => {
+  assert.equal(watiAccountId('https://live-mt-server.wati.io/334873'), '334873');
+  assert.equal(watiAccountId('https://live-mt-server.wati.io/334873/api/ext/v3'), '334873');
+  assert.equal(watiAccountId('https://live-mt-server.wati.io'), null);
 });
