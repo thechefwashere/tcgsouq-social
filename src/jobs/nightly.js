@@ -18,6 +18,10 @@ import { withIngestRun } from '../lib/ingest-run.js';
 const SOURCES = [
   ['shopify-analytics', () => import('./shopify-analytics.js')],
   ['shopify-orders', () => import('./shopify-orders.js')],
+  // Contacts before broadcasts: a broadcast recipient whose number is not yet a contact gets
+  // a minimal record created for it, and a full one is better than a sparse one.
+  ['wati-contacts', () => import('./wati-contacts.js')],
+  ['wati-broadcasts', () => import('./wati-broadcasts.js')],
 ];
 
 export default async function nightly(ctx) {

@@ -29,6 +29,8 @@ rows it managed to write, because the wrapper persists the failure before rethro
 | `status` | Postgres only | nothing | `DATABASE_URL` |
 | `shopify-analytics` | ShopifyQL | `shopify_daily`, `shopify_referrer_daily` | + `SHOPIFY_SHOP`, `SHOPIFY_ADMIN_TOKEN` |
 | `shopify-orders` | Admin GraphQL | `orders` | + `SHOPIFY_SHOP`, `SHOPIFY_ADMIN_TOKEN` |
+| `wati-contacts` | Wati v3 | `wa_contacts`, `consent_events` | + `WATI_API_URL`, `WATI_API_TOKEN` |
+| `wati-broadcasts` | Wati v3 | `wa_broadcasts`, `wa_messages` | + `WATI_API_URL`, `WATI_API_TOKEN` |
 | `nightly` | every source above | all of the above | all of the above |
 
 **Which job the deployed service runs is the `JOB` variable, not the start command.** The
@@ -133,3 +135,36 @@ The host is pinned by the URL. Revisit if this ever connects to a database we do
    persisted to `ingest_runs` on success *and* on failure.
 3. Register it in the `JOBS` map in `src/run.js`.
 4. Upsert on the natural key. Re-running a job must repair, never duplicate.
+
+## What Wati can and cannot tell us
+
+This determines what the WhatsApp data is worth, so it is written down rather than
+rediscovered.
+
+**Per broadcast**, Wati reports `total_sent` / `total_delivered` / `total_read` /
+`total_replied`, and those are stored. (An earlier note in this repo said Wati exposes no
+read data at all. That was drawn from `/broadcasts/overview`, whose `total_open` is
+documented as open *links*. The per-broadcast `statistics` object is a different thing and
+does carry `total_read`.)
+
+**Per recipient**, it reports only `status` — an untyped, undocumented string — with no
+timestamps beyond the row's creation. So we can say a broadcast was read by 412 people, but
+not *which* 412.
+
+The matched-cohort inference this project exists for needs the per-person version: read
+versus delivered-unread inside a single broadcast. That still has to come from Meta's WABA
+webhook. `wati-broadcasts` therefore fills `sent_at` and `delivered_at` where the status
+plainly says so, and **never writes `read_at`** — that column belongs to Meta, and a nightly
+Wati run must not overwrite a read timestamp the webhook has already recorded.
+
+### Consent is a changelog, not a snapshot
+
+`consent_events` is append-only and has no unique key, so a naive nightly re-run would
+duplicate every row. `wati-contacts` writes a row only when a contact's consent state
+differs from the last thing recorded for that number. A contact whose consent never changes
+produces exactly one row, ever.
+
+`occurred_at` is Wati's `last_updated`, and the stored evidence says so plainly: it is when
+Wati last modified the contact, **not** an observed moment of consent. Wati exposes no
+consent timestamp. Overstating that in a compliance record would be worse than admitting
+the limit.
