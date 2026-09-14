@@ -195,6 +195,21 @@ async function reportDrift(pool, rows, { table, key, fields }) {
   const days = [...new Set(rows.map((r) => r.day))];
   if (!days.length) return;
 
+  // Compare at the column's own precision. average_order_value is numeric(12,2), so
+  // Shopify's 574.887 and the stored 574.89 are the same value — the write changes
+  // nothing. Reporting that as drift buries the differences that matter in noise.
+  const { rows: scales } = await pool.query(
+    `select column_name, numeric_scale
+       from information_schema.columns
+      where table_name = $1 and numeric_scale is not null`, [table]
+  );
+  const scaleOf = new Map(scales.map((c) => [c.column_name, c.numeric_scale]));
+  const atScale = (v, f) => {
+    if (v === null) return null;
+    const scale = scaleOf.get(f);
+    return scale === undefined ? Number(v) : Number(Number(v).toFixed(scale));
+  };
+
   const { rows: existing } = await pool.query(
     `select *, day::text as day_key from ${table} where day = any($1::date[])`, [days]
   );
@@ -219,11 +234,11 @@ async function reportDrift(pool, rows, { table, key, fields }) {
     }
     let rowChanged = false;
     for (const f of fields) {
-      const before = found[f] === null ? null : Number(found[f]);
-      const after = r[f] === null ? null : Number(r[f]);
-      // Numeric comparison, so 306 and "306.00" are the same value; both-null counts as same.
+      const before = atScale(found[f], f);
+      const after = atScale(r[f], f);
+      // Both-null counts as the same; otherwise compare at the column's stored precision.
       const same = (before === null && after === null) ||
-        (before !== null && after !== null && Math.abs(before - after) < 1e-6);
+        (before !== null && after !== null && Math.abs(before - after) < 1e-9);
       if (!same) {
         rowChanged = true;
         diffs.push(`${r.day} ${r.referrer_source ?? ''} ${f}: ${before} -> ${after}`.replace(/ +/g, ' '));

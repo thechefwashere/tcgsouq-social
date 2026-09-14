@@ -1,7 +1,10 @@
 /**
  * Calendar-date helpers that never touch the local timezone.
  *
- * Shopify reports analytics in the SHOP's timezone (Asia/Dubai, UTC+4). Railway containers
+ * Shopify reports analytics in the SHOP's timezone. This store is configured as
+ * Asia/Muscat (confirmed from the live shop, 14 Sep 2026) — same UTC+4 offset as Dubai and
+ * no DST in either, so calendar days are identical; the job reads it from Shopify rather
+ * than assuming. Railway containers
  * run in UTC. Computing "today" with `new Date()` in the container is therefore wrong for
  * four hours out of every twenty-four, and wrong in the direction that silently drops the
  * most recent day. This has already produced three wrong readings of this store's data in
