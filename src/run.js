@@ -7,6 +7,7 @@ const JOBS = {
   status: () => import('./jobs/status.js'),
   'shopify-analytics': () => import('./jobs/shopify-analytics.js'),
   'shopify-orders': () => import('./jobs/shopify-orders.js'),
+  'wati-probe': () => import('./jobs/wati-probe.js'),
   'wati-contacts': () => import('./jobs/wati-contacts.js'),
   'wati-broadcasts': () => import('./jobs/wati-broadcasts.js'),
   nightly: () => import('./jobs/nightly.js'),

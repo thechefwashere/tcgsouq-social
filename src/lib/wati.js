@@ -53,6 +53,22 @@ function baseUrl() {
   return watiBase(required('WATI_API_URL'));
 }
 
+/**
+ * v1 requests. v1 keeps the account number in the path where v3 drops it, so the number is
+ * put back here rather than making callers think about it.
+ */
+export async function watiGetV1(path, params = {}) {
+  const account = watiAccountId(required('WATI_API_URL'));
+  if (!account) {
+    throw new Error(
+      'WATI_API_URL carries no account number, and the v1 API needs one in the path ' +
+      '(https://live-mt-server.wati.io/<account>/api/v1/...). Set WATI_API_URL to the URL ' +
+      'exactly as the Wati dashboard prints it.'
+    );
+  }
+  return watiGet(`/${account}${path}`, params);
+}
+
 export async function watiGet(path, params = {}) {
   const token = required('WATI_API_TOKEN');
   const url = new URL(`${baseUrl()}${path}`);
