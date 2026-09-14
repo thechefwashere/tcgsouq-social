@@ -7,6 +7,7 @@ const JOBS = {
   status: () => import('./jobs/status.js'),
   'shopify-analytics': () => import('./jobs/shopify-analytics.js'),
   'shopify-orders': () => import('./jobs/shopify-orders.js'),
+  nightly: () => import('./jobs/nightly.js'),
 };
 
 /** `--since 2023-05-01 --until 2026-09-14` -> { since: '...', until: '...' } */
@@ -21,10 +22,18 @@ function parseArgs(argv) {
   return args;
 }
 
-const name = process.argv[2];
+// The job comes from the command line locally, and from the JOB variable on Railway — so
+// switching what the deployed service runs is a variable change in the dashboard, not a
+// code edit and redeploy.
+const name = process.argv[2] || process.env.JOB || 'healthcheck';
 
-if (!name || !JOBS[name]) {
-  console.error(`usage: node src/run.js <job>\n\njobs: ${Object.keys(JOBS).join(', ')}`);
+if (!JOBS[name]) {
+  console.error(
+    `unknown job: ${name}\n\n` +
+    `usage: node src/run.js <job> [--since YYYY-MM-DD]\n` +
+    `   or: JOB=<job> node src/run.js\n\n` +
+    `jobs: ${Object.keys(JOBS).join(', ')}`
+  );
   process.exit(2);
 }
 

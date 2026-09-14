@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "node src/run.js healthcheck",
+    "startCommand": "node src/run.js",
     "restartPolicyType": "NEVER"
   }
 }

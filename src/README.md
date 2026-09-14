@@ -29,6 +29,19 @@ rows it managed to write, because the wrapper persists the failure before rethro
 | `status` | Postgres only | nothing | `DATABASE_URL` |
 | `shopify-analytics` | ShopifyQL | `shopify_daily`, `shopify_referrer_daily` | + `SHOPIFY_SHOP`, `SHOPIFY_ADMIN_TOKEN` |
 | `shopify-orders` | Admin GraphQL | `orders` | + `SHOPIFY_SHOP`, `SHOPIFY_ADMIN_TOKEN` |
+| `nightly` | every source above | all of the above | all of the above |
+
+**Which job the deployed service runs is the `JOB` variable, not the start command.** The
+start command is `node src/run.js` with no argument; it takes the job name from `JOB`, and
+falls back to `healthcheck`. So switching the service from a healthcheck to a real capture
+run is a variable change in the Railway dashboard — no code edit, no redeploy of a changed
+file. On the command line the argument still wins: `node src/run.js shopify-orders --since 2023-05-01`.
+
+`nightly` runs every source in one container — Railway bills per second and each job takes
+seconds, so the spin-up dominates. A failing source does not stop the others: if Wati's
+token expires, Shopify is still captured tonight and the failure is a row in `ingest_runs`
+rather than a silence. Each source gets its own row. The container still exits non-zero if
+anything failed, so the deploy goes red.
 
 `status` prints run history, `store_state` and row counts. It exists so questions about the
 database get answered from the database rather than from reading Railway's log pane, which
