@@ -7,7 +7,7 @@ import { db } from './db.js';
  * plausible-looking data, so a broken source looks identical to a quiet one. A source
  * with no recent `ok` row is broken. Without this table you cannot tell.
  */
-export async function withIngestRun(source, fn) {
+export async function withIngestRun(source, fn, args = {}) {
   const pool = db();
   const { rows } = await pool.query(
     `insert into ingest_runs (source, status) values ($1, 'running') returning id`,
@@ -17,7 +17,7 @@ export async function withIngestRun(source, fn) {
   const started = Date.now();
 
   // Jobs report progress through this; whatever they set is persisted on completion.
-  const ctx = { runId, rowsWritten: 0, cursor: null };
+  const ctx = { runId, rowsWritten: 0, cursor: null, args };
 
   try {
     const result = await fn(ctx);

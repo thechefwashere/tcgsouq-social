@@ -9,7 +9,8 @@
   },
   "scripts": {
     "healthcheck": "node src/run.js healthcheck",
-    "job": "node src/run.js"
+    "job": "node src/run.js",
+    "test": "node --test"
   },
   "dependencies": {
     "pg": "^8.13.1"
