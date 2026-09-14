@@ -66,8 +66,43 @@ That allows a matched-cohort comparison rather than click attribution:
 And the sharpest instrument available anywhere in this project: **read versus delivered-unread within
 a single broadcast**. Same list, same message, same moment — one group opened it and one did not.
 
-`wa_messages` exists to make that query possible. It needs message-level data; Wati's reporting
-screens will not provide it.
+`wa_messages` exists to make that query possible. But **where the timestamps come from matters, and
+it is not Wati.**
+
+### Read receipts come from Meta, not Wati — checked 14 Sep 2026
+
+Against the snapshot in `docs/platform/wati/`:
+
+| Wati gives | Wati does **not** give |
+|---|---|
+| Campaign aggregates: `total_sent`, `total_delivered`, `total_failed`, `total_stopped` | Per-recipient **read receipts with timestamps** |
+| Per-recipient **delivery** status (`/broadcasts/{id}/recipients` — `contact_phone`, `status`, `message_id`) | — |
+| Contacts, conversation messages, templates, credit balance | — |
+
+Two traps in the aggregates. `total_open` is documented as **"the total number of open links"** — link
+clicks, not message reads. `total_replied` is likewise "replied links". Neither is a WhatsApp read
+receipt. And the per-recipient `status` is an untyped nullable string with no documented enum, so
+whether `read` is ever a value cannot be established from the docs.
+
+**Read receipts come from the WABA webhook at Meta**, which reports `sent` / `delivered` / `read`
+per message against the phone number. The store owns the WABA, so this arrives through the store's
+own Meta app — and it keeps working after Wati is cancelled, which Wati-sourced data would not.
+
+So the division of labour is:
+
+- **Meta WABA webhook** → `wa_messages.sent_at / delivered_at / read_at`. The inference depends on it.
+- **Wati API** → the *export*: contacts and their attributes, consent records, conversation history,
+  templates. Plus campaign-level analytics and credit balance until the migration completes.
+
+### One honest caveat on the read arm
+
+A WhatsApp user can switch read receipts off. When they do, no `read` status is ever sent, so a
+genuine reader lands in the delivered-unread arm.
+
+That does not invalidate the comparison, and it fails in the safe direction: the unread arm is
+diluted with real readers, which **pulls the measured difference toward zero**. Any effect that
+survives is therefore an understatement, not an exaggeration. Worth stating whenever a number from
+this comparison is quoted.
 
 ## Backups
 
