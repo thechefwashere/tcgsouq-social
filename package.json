@@ -7,8 +7,9 @@
   "engines": {
     "node": ">=20"
   },
+  "packageManager": "npm@10.9.7",
   "scripts": {
-    "healthcheck": "node src/run.js healthcheck",
+    "start": "node src/run.js",
     "job": "node src/run.js",
     "test": "node --test"
   },

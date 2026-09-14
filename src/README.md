@@ -76,7 +76,16 @@ source. Everything after it inherits a proven loop.
 
 The service is a **one-shot job**, not a web service. `railway.json` sets
 `restartPolicyType: NEVER`, so the container runs the start command once, exits, and is not
-restarted into a crash loop when it succeeds.
+restarted into a crash loop when it succeeds. Verified in production: two pushes produced
+exactly two runs, each a single start-output-stop.
+
+**The start command must be the `start` script in `package.json`.** Railway builds with
+**Railpack**, which looks for that script at BUILD time and fails the build outright if it
+is missing — `railway.json`'s `deploy.startCommand` is read by Railway later, at deploy
+time, so it cannot rescue a build that never happened. (Railpack's own config file is
+`railpack.json`, not `railway.json`.) Both are set here and agree; the `start` script is the
+one that matters. Removing it breaks the build with "No start command detected", which it
+already did once.
 
 1. New service in the Railway project → **GitHub repo** → `thechefwashere/tcgsouq-social`.
 2. Variables: a project shared variable is not inherited automatically. On the service's
