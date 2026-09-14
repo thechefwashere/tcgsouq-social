@@ -51,6 +51,14 @@ Both Shopify jobs re-pull a trailing window by default and upsert, so running th
 repair, not duplication. `--since YYYY-MM-DD` forces a wider window; `--since 2023-05-01`
 rebuilds the whole history.
 
+`shopify-analytics` prints a **drift report before it writes**: every value it is about to
+upsert, compared against what is already stored for the same days. The default incremental
+window overlaps a fortnight of the hand-built backfill, so the first run is a correctness
+test, not just a smoke test. Later runs catch silent divergence — a changed ShopifyQL
+metric or a renamed referrer bucket — before it replaces 1,233 verified rows with subtly
+different ones. Movement in the last few days is normal (Shopify revises as refunds and
+late attribution land); movement in a day weeks old is the signal worth reading.
+
 ### The Shopify token is write-capable, and the client refuses to use it that way
 
 The token comes from an existing full-permission app shared with another program. Shopify

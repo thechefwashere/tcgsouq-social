@@ -172,6 +172,79 @@ async function upsertReferrer(pool, rows) {
   return rowCount;
 }
 
+
+/**
+ * Compare what the job is about to write against what is already stored, for the days that
+ * overlap. Reported BEFORE the upsert overwrites anything.
+ *
+ * This is the only cheap check that the job agrees with the hand-built backfill. The
+ * incremental window naturally overlaps a fortnight of already-verified data, so a first
+ * run is a correctness test rather than just a smoke test — and any later drift (a changed
+ * ShopifyQL metric, a renamed referrer bucket) shows up as a diff instead of silently
+ * replacing 1,233 good rows with subtly different ones.
+ *
+ * Differences are not always wrong: Shopify revises recent days as refunds and late
+ * attribution land, so movement in the last few days is expected. Movement in a day weeks
+ * old is not, and that is the signal worth seeing.
+ *
+ * Note the `day::text` cast. node-postgres parses a `date` column into a JS Date in the
+ * container's timezone, which can shift the calendar day by one and make every row look
+ * changed. Comparing text sidesteps it entirely.
+ */
+async function reportDrift(pool, rows, { table, key, fields }) {
+  const days = [...new Set(rows.map((r) => r.day))];
+  if (!days.length) return;
+
+  const { rows: existing } = await pool.query(
+    `select *, day::text as day_key from ${table} where day = any($1::date[])`, [days]
+  );
+  if (!existing.length) {
+    console.log(`  ${table}: no existing rows in this window — nothing to compare`);
+    return;
+  }
+
+  const keyOf = (r, dayValue) => key.map((k) => (k === 'day' ? dayValue : r[k])).join('|');
+  const index = new Map(existing.map((e) => [keyOf(e, e.day_key), e]));
+
+  const diffs = [];
+  let changedRows = 0;
+  let newRows = 0;
+
+  for (const r of rows) {
+    const found = index.get(keyOf(r, r.day));
+    if (!found) {
+      newRows++;
+      diffs.push(`${r.day} ${r.referrer_source ?? ''} NEW ROW`.replace(/ +/g, ' ').trim());
+      continue;
+    }
+    let rowChanged = false;
+    for (const f of fields) {
+      const before = found[f] === null ? null : Number(found[f]);
+      const after = r[f] === null ? null : Number(r[f]);
+      // Numeric comparison, so 306 and "306.00" are the same value; both-null counts as same.
+      const same = (before === null && after === null) ||
+        (before !== null && after !== null && Math.abs(before - after) < 1e-6);
+      if (!same) {
+        rowChanged = true;
+        diffs.push(`${r.day} ${r.referrer_source ?? ''} ${f}: ${before} -> ${after}`.replace(/ +/g, ' '));
+      }
+    }
+    if (rowChanged) changedRows++;
+  }
+
+  if (!diffs.length) {
+    console.log(`  ${table}: all ${rows.length} rows identical to what is stored`);
+    return;
+  }
+
+  console.log(
+    `  ${table}: ${rows.length} rows — ${changedRows} changed, ${newRows} new, ` +
+    `${rows.length - changedRows - newRows} identical`
+  );
+  for (const d of diffs.slice(0, 40)) console.log(`      ${d}`);
+  if (diffs.length > 40) console.log(`      ... and ${diffs.length - 40} more differences`);
+}
+
 export default async function shopifyAnalytics(ctx) {
   const pool = db();
   const { since, until, timeZone } = await resolveWindow(pool, ctx.args);
@@ -191,6 +264,19 @@ export default async function shopifyAnalytics(ctx) {
   if (daily.length < span) {
     console.warn(`  WARNING: ${span - daily.length} of ${span} days missing from the daily result`);
   }
+
+  // Compare before overwriting — see reportDrift.
+  await reportDrift(pool, daily, {
+    table: 'shopify_daily',
+    key: ['day'],
+    fields: ['sessions', 'orders', 'new_customers', 'returning_customers',
+             'total_sales', 'average_order_value', 'conversion_rate'],
+  });
+  await reportDrift(pool, referrer, {
+    table: 'shopify_referrer_daily',
+    key: ['day', 'referrer_source'],
+    fields: ['sessions', 'orders', 'total_sales'],
+  });
 
   const wroteDaily = await upsertDaily(pool, daily);
   const wroteReferrer = await upsertReferrer(pool, referrer);
