@@ -147,6 +147,9 @@ export default async function watiBroadcasts(ctx) {
   // Split by cause, for the same reason as in wati-contacts: these two mean different things.
   let noPhone = 0;
   let noMessageId = 0;
+  // Broadcasts whose recipients could not be fetched. Collected rather than thrown on, so
+  // one bad broadcast does not discard the other 169 and nine minutes of rate-limited work.
+  const failedBroadcasts = [];
 
   for await (const { items } of watiPages('/api/ext/v3/broadcasts', {
     pageSize: PAGE_SIZE,
@@ -168,6 +171,12 @@ export default async function watiBroadcasts(ctx) {
       await upsertBroadcast(pool, b, stats);
       broadcasts++;
 
+      // Per-broadcast isolation. Wati documents a 409 Conflict on conversation endpoints
+      // when a contact has several open conversations — and documents it ONLY in prose, not
+      // in the OpenAPI responses block, so it is not a case a generated client would model.
+      // Without this, one such broadcast aborts the whole job mid-run and the remaining
+      // broadcasts are never fetched.
+      try {
       for await (const { items: recips } of watiPages(
         `/api/ext/v3/broadcasts/${encodeURIComponent(b.id)}/recipients`,
         { pageSize: PAGE_SIZE, listKey: 'recipients' }
@@ -200,6 +209,11 @@ export default async function watiBroadcasts(ctx) {
         messages += await upsertMessages(pool, unique);
         ctx.rowsWritten = broadcasts + messages;
       }
+      } catch (err) {
+        const reason = err.message.split('\n')[0];
+        failedBroadcasts.push({ id: b.id, reason });
+        console.warn(`  broadcast ${b.id}: recipients failed — ${reason}`);
+      }
     }
   }
 
@@ -208,6 +222,21 @@ export default async function watiBroadcasts(ctx) {
   console.log(`  skipped: no phone      ${noPhone}`);
   console.log(`  skipped: no message id ${noMessageId}  (queued or never sent — no stable key)`);
   ctx.cursor = until;
+
+  if (failedBroadcasts.length) {
+    console.warn(`  ${failedBroadcasts.length} of ${broadcasts} broadcasts could not be fetched:`);
+    for (const f of failedBroadcasts.slice(0, 10)) console.warn(`      ${f.id}: ${f.reason}`);
+    if (failedBroadcasts.length > 10) {
+      console.warn(`      ... and ${failedBroadcasts.length - 10} more`);
+    }
+    // Thrown AFTER the work is done and stored, so ingest_runs records 'partial' with the
+    // detail rather than 'failed' with nothing. A source quietly dropping broadcasts every
+    // night must stay visible — the point is to keep the progress, not to hide the fault.
+    throw new Error(
+      `${failedBroadcasts.length} of ${broadcasts} broadcasts failed: ` +
+      failedBroadcasts.slice(0, 5).map((f) => `${f.id} (${f.reason})`).join('; ')
+    );
+  }
 
   return { since, until, broadcasts, messages, noPhone, noMessageId };
 }
