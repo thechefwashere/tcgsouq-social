@@ -73,7 +73,7 @@ defaults.
 |---|---|
 | Workspace tenant | **POKESOUQ LLC** on `tcgsouq.com` — legal entity as the org name, platform domain underneath. The display name is free text and changes at rebrand with no consequence |
 | Plan / billing | Business Starter, **direct from Google, no reseller**. Annual plan paid monthly. Paid service starts 2 Oct 2026; **payment method added 18 Sep**, so the conversion is covered |
-| Cloud billing | A billing account is attached to the Cloud organisation. **No hard spending cap exists in Google Cloud** — a budget only notifies. Set one low (Billing → Budgets & alerts) so a runaway job or a misused credential surfaces as an alert rather than a card statement |
+| Cloud billing | A billing account is attached to the Cloud organisation, on the **`pokesouq.com` payments profile** — see the note below. **No hard spending cap exists in Google Cloud**; a budget only notifies. Set one low (Billing → Budgets & alerts) so a runaway job or a misused credential surfaces as an alert rather than a card statement |
 | Users | **one**: `admin@tcgsouq.com`, the sole super-admin |
 | 2-step verification | on, authenticator app, plus SMS. 10 backup codes issued |
 | Recovery email | `admin@pokesouq.com` — deliberately **on a different domain**, so recovery never depends on the domain being recovered |
@@ -99,6 +99,23 @@ What makes it survivable rather than reckless:
 The residual risk is concentration: the authenticator, the 2SV SMS number and the recovery
 phone are all the same handset. Losing it falls back to the USB codes and the recovery
 mailbox.
+
+**Cloud billing points the wrong way, and is a thread for later.** The billing account sits on
+a Google payments profile belonging to `admin@pokesouq.com` — a business identity, so better
+than a personal one, but on the Workspace resold by Domain.com where the owner is not
+super-admin. It is the same identity this whole tenant exists to route around, and it is
+anchored to the domain the business eventually intends to retire.
+
+Nothing is broken and this is not urgent. Two things to do in the right order:
+
+- **Cheap mitigation, any time:** add `admin@tcgsouq.com` as a **Billing Account
+  Administrator** on that billing account, so administering billing stops depending on the
+  pokesouq identity staying reachable. The payments profile — whose card Google charges —
+  stays where it is.
+- **The real fix belongs to the Workspace consolidation**, not to a one-off. A Cloud Billing
+  account's payments profile is believed to be fixed at creation, so moving it means creating
+  a new billing account under a tcgsouq-owned profile and re-linking the projects — easy, but
+  deliberate. *Confidence: medium — verify before planning around it.*
 
 **Two Cloud defaults left deliberately alone:**
 
