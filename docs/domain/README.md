@@ -5,6 +5,10 @@ because `tcgsouq.com` is not a website to put up: it is the identity the busines
 onto between now and the planned 2028 rebrand, and the order in which pieces land on it
 determines how much of that migration hurts.
 
+**`CHARTER.md`, next to this file, is the decision**: what the domain is for, how the two
+domains divide the world, and the rules every repo follows. Read it first. This file is the
+live state and the record map.
+
 Background this doc does not repeat, in `thechefwashere/tcgsouq-shopify`
 (branch `claude/later-wati-replacement-tools-l2k641`, `docs/social-hub/`):
 `research/registrar-options.md` (why Porkbun), `research/migration-risk-google-apple.md`
@@ -70,11 +74,12 @@ Two constraints worth knowing before the map is treated as settled:
   they live on paths under `hub.` — one fewer record, one fewer certificate, and it keeps the
   service inside the 2-domain budget.
 
-## 3. Open decisions
+## 3. Decisions
 
-Recommendations, not changes. Nothing in this section has been done.
+Two are now settled (17 Sep 2026, owner); the rest are recommendations. Nothing in this
+section has been *executed* — no record exists yet.
 
-**D1 — DNS host: Porkbun's own nameservers.** Free, supports `ALIAS` at the apex, has dated
+**D1 — DNS host: Porkbun's own nameservers. DECIDED.** Free, supports `ALIAS` at the apex, has dated
 restore points for the zone, and a clean REST API this repo already automates against
 (`scripts/dns_sync.py`, verified end-to-end against Porkbun's mock server). Cloudflare buys
 redirect rules, edge caching and free Email Routing at the cost of a second vendor, and
@@ -89,7 +94,9 @@ is per-origin — sharing a login across subdomains means configuring cookie-bas
 an explicit parent-domain scope. That is a known pattern, but it is not the default and this
 session did not test it. *Recommend two subdomains, after that check.*
 
-**D3 — Email.** Three options, and they are mutually exclusive at the MX record:
+**D3 — Email: Google Workspace on tcgsouq.com, direct from Google. DECIDED.** The options
+were mutually exclusive at the MX record, and the one chosen is the one the continuity plan
+rests on:
 1. *Porkbun forwarding* — free, instant, up to 20 addresses forwarded into the existing Gmail.
    Enough for `accounts@` (the finance inbox) and `dmarc@` (report address).
 2. *Google Workspace on tcgsouq.com* — ~$6/user/mo, and the piece the whole 2028 continuity
@@ -102,10 +109,16 @@ session did not test it. *Recommend two subdomains, after that check.*
 3. *Neither* — publish a null MX and leave the domain mail-dead.
 
 The developer-accounts decision of 13 Sep took Workspace **off the critical path** for the
-social build (the Play Console account owns the Cloud project instead), so this is not
-blocking anyone. But it is the backbone of the rebrand plan and it is cheap now that the DNS
-is ours. *Recommend Workspace when the owner is ready to spend; forwarding as the free
-interim — not both, since Workspace replaces the MX.*
+social build (the Play Console account owns the Cloud project instead). It is back on the
+path by choice, not by necessity: it is the backbone of the rebrand plan and it is cheap now
+that the DNS is ours. **Porkbun email forwarding is therefore not used** — it would fight the
+Workspace MX.
+
+Consequence for §4 below: the stopgap SPF/DMARC pair is *not* published, because publishing
+`-all` and `p=reject` and then sending real mail from Workspace means every message is
+rejected until someone remembers to change them. The Workspace-shaped records go in at
+signup instead. If Workspace slips more than a couple of weeks, publish the stopgap pair —
+both variants are in the manifest, one edit apart.
 
 **D4 — Short links: keep customer-facing links on `go.pokesouq.com`.** Customers know
 PokeSouq; an unfamiliar domain inside a WhatsApp broadcast is a trust problem and WhatsApp
@@ -120,27 +133,36 @@ and a 301 is cached hard by browsers. A real landing page becomes worth building
 platform asks for a privacy-policy or data-deletion URL; the Meta app stays in development
 mode against the business's own accounts, so no App Review needs one today.
 
-## 4. Anti-spoofing, before anything else
+## 4. Mail authentication — sequenced, not rushed
 
-The two records marked `ready` in the manifest can go in the minute the delegation lands, and
-should:
+A domain with no SPF and no DMARC is a free brand to forge, so these records matter. But the
+order matters more, and it is the one place in this plan where doing the safe-looking thing
+first causes an outage:
+
+- `v=spf1 -all` plus `p=reject` is exactly right for a domain that sends no mail.
+- The moment Workspace sends mail, those same two records reject **every message the business
+  sends**, until someone remembers to change them.
+
+Since Workspace is the decided next step (§3 D3), the records go in **with** it, in their
+Workspace shape, rather than being published now and rewritten:
 
 ```
-@        TXT   v=spf1 -all
-_dmarc   TXT   v=DMARC1; p=reject; adkim=s; aspf=s
+@        TXT   v=spf1 include:_spf.google.com ~all
+_dmarc   TXT   v=DMARC1; p=none; rua=mailto:dmarc@tcgsouq.com
+google._domainkey  TXT  (generated in Admin console, 2048-bit)
+MX             (the records Google's console shows — use those, not any value written here)
 ```
 
-A domain with no SPF and no DMARC is a free brand to forge, and a new domain attached to a
-shop is a natural target. `-all` and `p=reject` are safe *because* nothing legitimate sends as
-`tcgsouq.com` yet — there is nothing to break. Both get rewritten the day mail arrives (§3 D3),
-and the manifest carries that instruction on the record itself.
+Then read the DMARC reports for about two weeks and climb `p=none` → `p=quarantine` →
+`p=reject` once everything legitimate passes. If Workspace slips beyond a couple of weeks,
+publish the stopgap `-all` / `p=reject` pair in the meantime; the manifest carries both
+variants so it is one status change either way.
 
 One correctness detail the manifest also records: a DMARC `rua=` address on a *different*
 domain only works if that domain publishes an authorisation record
 (`tcgsouq.com._report._dmarc.gmail.com`, RFC 7489 §7.1). We cannot publish records on
-`gmail.com`, so reports must go to an address **on tcgsouq.com** — which means `rua` waits
-for D3, and is deliberately absent until then rather than pointing somewhere that silently
-discards reports.
+`gmail.com`, so reports go to an address **on tcgsouq.com** — which a Workspace mailbox
+provides, and which is why `rua` was deliberately absent until this decision.
 
 ## 5. Tooling
 
@@ -165,8 +187,12 @@ scope them to `tcgsouq.com`.
 
 1. Switch the nameservers to Porkbun; wait for propagation; `dns_verify.py` goes green on
    delegation. **Nothing else can start before this.**
-2. Publish SPF + DMARC (`dns_sync.py --apply`).
-3. Decide D3, D5 — both are minutes of dashboard work once decided.
+2. Google Workspace on tcgsouq.com, direct from Google, and its records (verification TXT,
+   MX, DKIM) plus the SPF/DMARC pair above — all of it inside the Porkbun zone, which is why
+   step 1 comes first.
+3. `admin@tcgsouq.com` added as a second owner/admin on the platform accounts that carry a
+   7-day hold (Business Profile, Play Console, Apple, Shopify staff, Supabase). Costs nothing,
+   and the clocks are then long spent.
 4. `codex.tcgsouq.com` — the one service that exists today and can be moved onto the domain
    immediately (add in Vercel first, then the CNAME).
 5. `hub.` / `inbox.` / `go.` as the Railway services come up, per the social and WhatsApp build.

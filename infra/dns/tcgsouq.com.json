@@ -9,32 +9,58 @@
     "maceio.ns.porkbun.com",
     "salvador.ns.porkbun.com"
   ],
-  "defaults": { "ttl": 600 },
+  "defaults": {
+    "ttl": 600
+  },
   "records": [
     {
       "name": "",
       "type": "TXT",
+      "content": "v=spf1 include:_spf.google.com ~all",
+      "status": "blocked",
+      "blocked_on": "Google Workspace signup (decision D3, decided 17 Sep 2026). Goes in together with the MX records the Admin console shows.",
+      "purpose": "Authorise Google's servers to send as tcgsouq.com, and soft-fail everything else."
+    },
+    {
+      "name": "_dmarc",
+      "type": "TXT",
+      "content": "v=DMARC1; p=none; rua=mailto:dmarc@tcgsouq.com",
+      "status": "blocked",
+      "blocked_on": "Google Workspace signup - rua needs a real mailbox ON this domain (RFC 7489 s7.1: an external rua address requires an authorisation record on ITS domain, which we cannot publish on gmail.com).",
+      "purpose": "Start at p=none and collect reports.",
+      "revisit": "After ~2 weeks of clean reports, climb p=none -> p=quarantine -> p=reject."
+    },
+    {
+      "name": "",
+      "type": "MX",
+      "content": "(use the records Google's Admin console shows at setup)",
+      "status": "blocked",
+      "blocked_on": "Google Workspace signup. Never transcribe MX values from documentation - Google has changed its recommended set before.",
+      "purpose": "Deliver mail for tcgsouq.com to Workspace."
+    },
+    {
+      "name": "google._domainkey",
+      "type": "TXT",
+      "content": "(generated in Admin console: Apps > Gmail > Authenticate email, 2048-bit)",
+      "status": "blocked",
+      "blocked_on": "Google Workspace signup, and the key must be generated there first.",
+      "purpose": "DKIM signing, without which DMARC alignment rests on SPF alone."
+    },
+    {
+      "name": "",
+      "type": "TXT",
       "content": "v=spf1 -all",
-      "status": "ready",
-      "purpose": "Nothing sends mail as tcgsouq.com yet, so every message claiming to is a forgery. -all tells receivers to reject outright.",
-      "revisit": "Replace the moment real mail exists: Workspace becomes 'v=spf1 include:_spf.google.com ~all'."
+      "status": "blocked",
+      "blocked_on": "STOPGAP, mutually exclusive with the Workspace SPF above. Publish this pair ONLY if Workspace slips more than ~2 weeks, and delete it before Workspace sends its first message - -all plus p=reject rejects every mail the business sends.",
+      "purpose": "Refuse forgeries while the domain genuinely sends no mail."
     },
     {
       "name": "_dmarc",
       "type": "TXT",
       "content": "v=DMARC1; p=reject; adkim=s; aspf=s",
-      "status": "ready",
-      "purpose": "Reject anything failing SPF/DKIM alignment. Safe at p=reject precisely because no legitimate mail exists yet - there is nothing to break.",
-      "revisit": "When mail starts: drop to p=none, add rua=mailto:dmarc@tcgsouq.com, read reports for two weeks, then climb back to reject. rua MUST be an address on tcgsouq.com - an external mailbox needs an authorisation record on ITS domain (RFC 7489 s7.1), which we cannot publish on gmail.com."
-    },
-    {
-      "name": "",
-      "type": "MX",
-      "content": ".",
-      "prio": 0,
       "status": "blocked",
-      "blocked_on": "Email decision (docs/domain/README.md, decision D3). A null MX says 'this domain receives no mail' - correct only if we do NOT enable Porkbun forwarding or Workspace.",
-      "purpose": "RFC 7505 null MX: bounce mail to tcgsouq.com immediately instead of letting senders retry for days."
+      "blocked_on": "STOPGAP, pairs with the -all SPF above. Same warning: replace before Workspace mail flows.",
+      "purpose": "Reject forgeries while the domain genuinely sends no mail."
     },
     {
       "name": "codex",
@@ -93,10 +119,24 @@
   "verification_records": {
     "note": "Values come from each platform's console and are pasted in when that platform is set up. Never guess them.",
     "pending": [
-      { "name": "", "type": "TXT", "for": "Google Workspace / Search Console domain verification", "repo": "tcgsouq-finance, tcgsouq-social" },
-      { "name": "google._domainkey", "type": "TXT", "for": "Workspace DKIM (generated in Admin console, 2048-bit)", "repo": "tcgsouq-finance" },
-      { "name": "", "type": "TXT", "for": "Meta business domain verification", "repo": "tcgsouq-social" },
-      { "name": "_railway", "type": "TXT", "for": "Railway custom-domain challenge (one per domain)", "repo": "tcgsouq-social, tcgsouq-whatsapp" }
+      {
+        "name": "",
+        "type": "TXT",
+        "for": "Google Workspace / Search Console domain verification",
+        "repo": "tcgsouq-finance, tcgsouq-social"
+      },
+      {
+        "name": "",
+        "type": "TXT",
+        "for": "Meta business domain verification",
+        "repo": "tcgsouq-social"
+      },
+      {
+        "name": "_railway",
+        "type": "TXT",
+        "for": "Railway custom-domain challenge (one per domain)",
+        "repo": "tcgsouq-social, tcgsouq-whatsapp"
+      }
     ]
   }
 }

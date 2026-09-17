@@ -6,6 +6,14 @@ undo it. Read `README.md` first for why any of this is shaped the way it is.
 Everything here is done from the Porkbun dashboard by the account holder. Nothing in this
 repo can do step 1, because moving the delegation needs the registrar login.
 
+**Nameservers before Google Workspace — not the other way round.** Workspace setup asks you to
+add DNS records (a verification TXT, then MX and DKIM). You want to be adding those in the
+zone that will still be authoritative next week, not in the one you are leaving. Worse: if the
+MX records go in at Domain.com and the nameservers are flipped afterwards, **mail stops the
+instant the flip propagates**, because the Porkbun zone would not carry them. Flip first —
+there is nothing served from the zone today, so there is nothing to break — then do Workspace
+entirely inside Porkbun, once.
+
 ---
 
 ## 1. Switch the nameservers to Porkbun — do this first
@@ -32,6 +40,11 @@ different story — it carries the live Shopify records — and is *not* touched
    python3 scripts/dns_verify.py
    ```
    The delegation line goes from `WRONG` to `OK`.
+
+**What you may see afterwards.** Porkbun may populate the new zone with its own default
+records (a parking page). That is normal and harmless. Leave them; `dns_sync.py` lists records
+it does not manage rather than deleting them, and the apex forward in step 4 replaces them
+anyway.
 
 **Timing.** The registry updates within minutes. Resolvers that already cached the old
 delegation keep it until their copy expires — usually minutes to a couple of hours, worst
@@ -62,20 +75,49 @@ store.
 
 ---
 
-## 3. Publish the anti-spoofing records
+## 3. Google Workspace on tcgsouq.com
 
-Either `python3 scripts/dns_sync.py --apply`, or by hand in **DNS** on the domain:
+Decision D3, made 17 Sep 2026. **Sign up directly with Google** — never through a reseller.
+That is the exact mistake that left `admin@pokesouq.com` without super-admin on its own tenant.
 
-| Type | Host | Value | TTL |
-|---|---|---|---|
-| TXT | *(blank / @)* | `v=spf1 -all` | 600 |
-| TXT | `_dmarc` | `v=DMARC1; p=reject; adkim=s; aspf=s` | 600 |
+1. Sign up at `workspace.google.com` for `tcgsouq.com`. One user, Business Starter, 14-day
+   trial. Create `admin@tcgsouq.com` as the super-admin.
+2. Google's wizard prints the records to add. Add them in Porkbun's **DNS** screen:
+   - the **verification TXT**,
+   - the **MX record(s) the console shows** — use those values, not any written down here or
+     anywhere else; Google has changed its recommended set before,
+   - the **DKIM TXT** at `google._domainkey`, generated in Admin console → Apps → Google
+     Workspace → Gmail → **Authenticate email**, at **2048-bit**.
+3. Add mail authentication in the same sitting, because the MX going live is what makes them
+   matter:
 
-Check with `python3 scripts/dns_verify.py` — both go `OK`.
+   | Type | Host | Value |
+   |---|---|---|
+   | TXT | *(blank / @)* | `v=spf1 include:_spf.google.com ~all` |
+   | TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:dmarc@tcgsouq.com` |
 
-**Undo:** delete the two records. Nothing depends on them.
+   Start at `p=none`, not `p=reject`. Read the reports for about two weeks, then climb to
+   `p=quarantine` and then `p=reject` once everything legitimate passes.
+4. Create `accounts@tcgsouq.com` for supplier invoices (the finance repo's inbox) and
+   `dmarc@tcgsouq.com` for the reports above. Both are ordinary aliases on the one mailbox.
+5. Check: `python3 scripts/dns_verify.py` — the mail records go `OK` once the manifest entries
+   are flipped from `blocked` to `ready`. Send yourself a message from the new address and
+   check the headers show `spf=pass` and `dkim=pass`.
 
----
+**Undo:** the Workspace trial can be cancelled; the DNS records are deletable. Nothing else in
+the family depends on this yet.
+
+**Then, once `admin@tcgsouq.com` exists** — and this is the part with a clock on it — add it as
+a second owner/admin on the accounts that impose a 7-day ownership hold: Google Business
+Profile (as **Owner**, not Manager), Play Console (all permissions), Apple Developer (Admin),
+the YouTube Brand Account (Owner), Shopify (full-permission **staff user**, not a
+collaborator), and Supabase (second Owner). None of these transfers anything today; they start
+the clocks so the rebrand is never waiting on one.
+
+**And the trap to walk into deliberately:** a Cloud organisation created after 3 May 2024
+enforces `iam.disableServiceAccountKeyCreation` by default. Service-account JSON keys — the
+pattern PackProof uses — will fail in the new org until you turn that policy off as
+Organization Policy Administrator. On `tcgsouq.com` you can; that is the whole point.
 
 ## 4. Point the apex somewhere (decision D5)
 
@@ -91,28 +133,13 @@ apex records and prune would delete them.
 
 ---
 
-## 5. Email (decision D3) — pick one, not both
+## 5. Email — decided, see step 3
 
-### Option A — Porkbun forwarding (free, ~2 minutes)
-Domain Management → **Email Forwarding**. Add `accounts@tcgsouq.com` → the owner's Gmail, and
-`dmarc@tcgsouq.com` → the same. Porkbun sets the MX records itself. Then update the DMARC
-record to `v=DMARC1; p=reject; rua=mailto:dmarc@tcgsouq.com; adkim=s; aspf=s`.
-
-### Option B — Google Workspace on tcgsouq.com (~$6/user/mo)
-Sign up **directly with Google**, never through a reseller — that is the exact mistake that
-left `admin@pokesouq.com` without super-admin. Google's setup wizard prints the records to
-add: a verification TXT, the MX record(s) it currently recommends, and a DKIM TXT at
-`google._domainkey` generated in Admin console → Apps → Google Workspace → Gmail →
-Authenticate email (choose 2048-bit). **Use the values the console shows**, not any value
-written down here — Google has changed its recommended MX set before.
-
-Then, and this is the point of the exercise: set SPF to `v=spf1 include:_spf.google.com ~all`,
-drop DMARC to `p=none` with `rua=mailto:dmarc@tcgsouq.com`, read the reports for about two
-weeks, and put it back to `p=reject` once everything legitimate passes.
-
-Option B replaces Option A. Running both means two sets of MX records and lost mail.
-
----
+D3 was settled on 17 Sep 2026: Google Workspace, direct from Google. **Porkbun email
+forwarding is therefore not used** — it sets its own MX records and would fight Workspace's.
+If Workspace slips more than a couple of weeks, publish the stopgap `v=spf1 -all` /
+`v=DMARC1; p=reject` pair from the manifest in the meantime, and delete it before Workspace
+sends its first message: `-all` with `p=reject` rejects every mail the business sends.
 
 ## 6. Account hardening — do it once, now
 
