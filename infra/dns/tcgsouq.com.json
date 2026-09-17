@@ -1,0 +1,102 @@
+{
+  "domain": "tcgsouq.com",
+  "registrar": "porkbun",
+  "dns_host": "porkbun",
+  "doc": "docs/domain/README.md",
+  "nameservers": [
+    "curitiba.ns.porkbun.com",
+    "fortaleza.ns.porkbun.com",
+    "maceio.ns.porkbun.com",
+    "salvador.ns.porkbun.com"
+  ],
+  "defaults": { "ttl": 600 },
+  "records": [
+    {
+      "name": "",
+      "type": "TXT",
+      "content": "v=spf1 -all",
+      "status": "ready",
+      "purpose": "Nothing sends mail as tcgsouq.com yet, so every message claiming to is a forgery. -all tells receivers to reject outright.",
+      "revisit": "Replace the moment real mail exists: Workspace becomes 'v=spf1 include:_spf.google.com ~all'."
+    },
+    {
+      "name": "_dmarc",
+      "type": "TXT",
+      "content": "v=DMARC1; p=reject; adkim=s; aspf=s",
+      "status": "ready",
+      "purpose": "Reject anything failing SPF/DKIM alignment. Safe at p=reject precisely because no legitimate mail exists yet - there is nothing to break.",
+      "revisit": "When mail starts: drop to p=none, add rua=mailto:dmarc@tcgsouq.com, read reports for two weeks, then climb back to reject. rua MUST be an address on tcgsouq.com - an external mailbox needs an authorisation record on ITS domain (RFC 7489 s7.1), which we cannot publish on gmail.com."
+    },
+    {
+      "name": "",
+      "type": "MX",
+      "content": ".",
+      "prio": 0,
+      "status": "blocked",
+      "blocked_on": "Email decision (docs/domain/README.md, decision D3). A null MX says 'this domain receives no mail' - correct only if we do NOT enable Porkbun forwarding or Workspace.",
+      "purpose": "RFC 7505 null MX: bounce mail to tcgsouq.com immediately instead of letting senders retry for days."
+    },
+    {
+      "name": "codex",
+      "type": "CNAME",
+      "content": "cname.vercel-dns.com",
+      "status": "blocked",
+      "blocked_on": "Add codex.tcgsouq.com as a domain on the Vercel project tcgsouq-codex FIRST. DNS pointed at Vercel for a domain Vercel does not know about serves a 404 and issues no certificate.",
+      "purpose": "Codex curation app, today on tcgsouq-codex.vercel.app.",
+      "repo": "tcgsouq-codex"
+    },
+    {
+      "name": "hub",
+      "type": "CNAME",
+      "content": "<railway-target>.up.railway.app",
+      "status": "blocked",
+      "blocked_on": "Railway service for tcgsouq-social must exist. Railway issues a PER-DOMAIN CNAME target and a TXT challenge - read both off the Railway dashboard; the CNAME alone returns 404.",
+      "purpose": "Social hub UI.",
+      "repo": "tcgsouq-social"
+    },
+    {
+      "name": "inbox",
+      "type": "CNAME",
+      "content": "<railway-target>.up.railway.app",
+      "status": "blocked",
+      "blocked_on": "Railway service for tcgsouq-whatsapp must exist (same per-domain CNAME + TXT rule as hub).",
+      "purpose": "WhatsApp inbox PWA. Its own subdomain rather than hub/chat - see docs/domain/README.md, decision D2.",
+      "repo": "tcgsouq-whatsapp"
+    },
+    {
+      "name": "go",
+      "type": "CNAME",
+      "content": "<railway-target>.up.railway.app",
+      "status": "blocked",
+      "blocked_on": "Short-link domain decision (D4) - go.tcgsouq.com vs keeping customer-facing links on go.pokesouq.com until the rebrand.",
+      "purpose": "Short-link redirector for UTM'd links in posts and broadcasts.",
+      "repo": "tcgsouq-social"
+    },
+    {
+      "name": "api",
+      "type": "CNAME",
+      "content": "<railway-target>.up.railway.app",
+      "status": "blocked",
+      "blocked_on": "PackProof backend is not deployed - the Railway trial ended and was not upgraded.",
+      "purpose": "PackProof backend (Shopify orders -> Drive proof uploads).",
+      "repo": "packproof-backend"
+    },
+    {
+      "name": "",
+      "type": "CAA",
+      "content": "0 issue \"letsencrypt.org\"",
+      "status": "blocked",
+      "blocked_on": "Add only AFTER the first certificates issue, listing the issuers actually observed. A CAA record that omits a live issuer silently breaks certificate renewal weeks later - the classic footgun.",
+      "purpose": "Restrict which CAs may issue for tcgsouq.com."
+    }
+  ],
+  "verification_records": {
+    "note": "Values come from each platform's console and are pasted in when that platform is set up. Never guess them.",
+    "pending": [
+      { "name": "", "type": "TXT", "for": "Google Workspace / Search Console domain verification", "repo": "tcgsouq-finance, tcgsouq-social" },
+      { "name": "google._domainkey", "type": "TXT", "for": "Workspace DKIM (generated in Admin console, 2048-bit)", "repo": "tcgsouq-finance" },
+      { "name": "", "type": "TXT", "for": "Meta business domain verification", "repo": "tcgsouq-social" },
+      { "name": "_railway", "type": "TXT", "for": "Railway custom-domain challenge (one per domain)", "repo": "tcgsouq-social, tcgsouq-whatsapp" }
+    ]
+  }
+}
