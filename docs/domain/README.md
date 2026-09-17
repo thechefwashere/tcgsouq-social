@@ -63,6 +63,44 @@ domains; only one of them has moved. Note the sequencing trap it documents: a tr
 freezes a domain for 60 days, so `tcgsouq.com` cannot move again before **~16 Nov 2026** —
 irrelevant unless someone reconsiders Cloudflare Registrar.
 
+## 1b. The identity layer, as built — 18 Sep 2026
+
+Walked screen by screen in the Workspace and Cloud consoles. Recorded because this is the
+layer everything else inherits from, and because several of these are decisions rather than
+defaults.
+
+| | |
+|---|---|
+| Workspace tenant | **POKESOUQ LLC** on `tcgsouq.com` — legal entity as the org name, platform domain underneath. The display name is free text and changes at rebrand with no consequence |
+| Plan / billing | Business Starter, **direct from Google, no reseller**. Annual plan paid monthly. **Paid service starts 2 Oct 2026** — a payment method must be in place before then or the tenant suspends, taking mail with it |
+| Users | **one**: `admin@tcgsouq.com`, the sole super-admin |
+| 2-step verification | on, authenticator app, plus SMS. 10 backup codes issued |
+| Recovery email | `admin@pokesouq.com` — deliberately **on a different domain**, so recovery never depends on the domain being recovered |
+| Google Cloud organisation | **`tcgsouq.com`, created 18 Sep 02:27**, with `admin@tcgsouq.com` as Organization Administrator |
+
+**The open risk: one user, one super-admin.** Every factor except the backup codes and the
+recovery email lives on a single handset — authenticator, 2SV SMS and recovery phone are the
+same number. The backup codes are the only factor independent of that device, which is why
+they belong somewhere physical rather than on the phone or the laptop. A second super-admin
+is the structural fix and costs another licence; it is an open decision, not an oversight.
+
+**Two Cloud defaults left deliberately alone:**
+
+- `iam.disableServiceAccountKeyCreation` is **enforced by default** on any organisation
+  created after 3 May 2024, and this one was created minutes before this was written. It
+  blocks downloadable service-account JSON keys org-wide. Left on: leaked service-account
+  keys are among the most common ways Cloud accounts are compromised, and nothing being built
+  today needs one. Turn it off only for a workload that genuinely requires a downloaded key,
+  as Organization Policy Administrator — and know that this is the policy that pushed
+  PackProof's project onto a personal Gmail in the first place, so a key-creation failure
+  three months from now is this, not a bug.
+- **"Set Up Foundation"** on the Cloud welcome screen is Google's Terraform enterprise
+  blueprint — folder hierarchies, multiple projects, policy scaffolding. Not clicked, and not
+  to be: it is a large amount of structure to maintain for a one-person business.
+
+**PackProof's existing project stays where it is** for now. Moving a project into an
+organisation needs specific roles on both ends and is a deliberate operation, not a tidy-up.
+
 ## 2. Host map
 
 What each name is for, which repo owns it, and what has to exist before the DNS record is
