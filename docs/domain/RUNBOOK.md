@@ -107,9 +107,18 @@ That is the exact mistake that left `admin@pokesouq.com` without super-admin on 
    `p=quarantine` and then `p=reject` once everything legitimate passes.
 4. Create `accounts@tcgsouq.com` for supplier invoices (the finance repo's inbox) and
    `dmarc@tcgsouq.com` for the reports above. Both are ordinary aliases on the one mailbox.
-5. Check: `python3 scripts/dns_verify.py` — the mail records go `OK` once the manifest entries
-   are flipped from `blocked` to `ready`. Send yourself a message from the new address and
-   check the headers show `spf=pass` and `dkim=pass`.
+5. **Turn DKIM signing on.** Publishing the `google._domainkey` record does *not* make Google
+   sign anything — the same Admin console page has a **Start authentication** button that
+   does. If it reads "Not authenticating email", the DNS is perfect and outbound mail is
+   still unsigned. This is the most common way a correct-looking setup fails.
+6. Check: `python3 scripts/dns_verify.py` — the mail records go `OK` once the manifest entries
+   are flipped from `blocked` to `ready`.
+7. Then test **to an address outside the domain** — a personal Gmail, not another address on
+   `tcgsouq.com` — and open **Show original** on the copy that arrives there, not on the one
+   in Sent. SPF, DKIM and DMARC are checks a *receiving* server runs on mail that came in off
+   the internet; a message from `admin@` to `admin@` never leaves Google ("Delivered after 0
+   seconds", a `@mail.gmail.com` Message-ID) so Gmail shows no auth rows at all. That looks
+   like a failure and is not one. Externally delivered, you want `spf=pass` and `dkim=pass`.
 
 **Undo:** the Workspace trial can be cancelled; the DNS records are deletable. Nothing else in
 the family depends on this yet.
