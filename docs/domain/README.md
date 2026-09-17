@@ -72,7 +72,8 @@ defaults.
 | | |
 |---|---|
 | Workspace tenant | **POKESOUQ LLC** on `tcgsouq.com` — legal entity as the org name, platform domain underneath. The display name is free text and changes at rebrand with no consequence |
-| Plan / billing | Business Starter, **direct from Google, no reseller**. Annual plan paid monthly. **Paid service starts 2 Oct 2026** — a payment method must be in place before then or the tenant suspends, taking mail with it |
+| Plan / billing | Business Starter, **direct from Google, no reseller**. Annual plan paid monthly. Paid service starts 2 Oct 2026; **payment method added 18 Sep**, so the conversion is covered |
+| Cloud billing | A billing account is attached to the Cloud organisation. **No hard spending cap exists in Google Cloud** — a budget only notifies. Set one low (Billing → Budgets & alerts) so a runaway job or a misused credential surfaces as an alert rather than a card statement |
 | Users | **one**: `admin@tcgsouq.com`, the sole super-admin |
 | 2-step verification | on, authenticator app, plus SMS. 10 backup codes issued |
 | Recovery email | `admin@pokesouq.com` — deliberately **on a different domain**, so recovery never depends on the domain being recovered |
