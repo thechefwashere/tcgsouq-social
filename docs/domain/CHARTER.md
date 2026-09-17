@@ -98,6 +98,54 @@ about, which looks exactly like a broken deploy and wastes an afternoon.
 **R9 — Anything customer-visible or structural gets proposed before it is changed.** The
 owner's standing preference, and it applies to domains more than anything else.
 
+**R10 — One credential per platform per *trust boundary*.** Not one for everything, not one
+per repo. See below.
+
+## 3b. Credential topology (D7 — decided 18 Sep 2026, not yet built)
+
+The question that prompted this: several repos will talk to the same platforms — Shopify,
+Meta, Google — so should they share one connection rather than each setting up their own?
+
+**Centralise ownership and records aggressively. Centralise credentials only where the trust
+boundary is genuinely identical.**
+
+What gets centralised:
+
+- **Ownership.** Every platform account owned by `admin@tcgsouq.com` or the business Meta
+  Business Portfolio, with access granted from there (R4). This is the real answer to "don't
+  set it up twice".
+- **Shared data.** Social and WhatsApp already share one Supabase project — customers,
+  preferences, consent, short links. They are one product wearing two repos.
+- **A registry.** Every credential recorded: which app, which scopes, which repo consumes it,
+  where the secret lives, when it was last rotated. This is the gap that has already cost
+  something — a Shopify token sits in plaintext in a spreadsheet cell, a legacy custom app
+  called "OTO" runs PackProof, and nobody is certain whether they are the same token. That is
+  a bookkeeping failure, not a credential design failure, and one shared credential would not
+  have prevented it.
+
+What does **not** get shared — one credential across everything:
+
+| | Why |
+|---|---|
+| Least privilege | Finance needs read-only orders and payouts; social needs marketing writes; WhatsApp needs customer data. A shared app needs the **union** of every scope, so every consumer holds powers it has no business having |
+| Blast radius | One leaked token would reach the store, the customer list and the books at once |
+| Rate limits | Shopify and Meta throttle per app. Share one and a runaway finance sync throttles WhatsApp sends |
+| Rotation | Rotate once, break everything simultaneously — exactly the trap the OTO token already sets |
+| Auth models differ | Finance runs through connectors attached to a Claude session (OAuth, per session); the hub runs as an always-on service with sealed variables. A session's token cannot be handed to a server |
+
+The shape to build:
+
+| Credential | Consumed by | Why grouped this way |
+|---|---|---|
+| One Shopify app for the hub | `tcgsouq-social` + `tcgsouq-whatsapp` | Same product, same Supabase, same Railway family, same blast radius |
+| A separate **read-only** Shopify app | `tcgsouq-finance` | It never needs write scopes |
+| PackProof keeps its own | `packproof-backend` | Different lifecycle, currently dead, will be rebuilt |
+| One Meta Business Portfolio, apps beneath it | social, whatsapp | Ownership central; apps separate where review scopes and rate limits differ |
+
+**Status: agreed, not built.** It is implemented when the hub build starts and the Dev
+Dashboard apps are actually created — not before, since creating credentials ahead of the
+code that uses them only adds things to rotate.
+
 ## 4. What the rebrand will and will not change
 
 Worth knowing now, so nothing gets built on an assumption that cannot survive it.
@@ -123,4 +171,5 @@ to be edited during the riskiest week of the migration.
 | D3 | Google Workspace on `tcgsouq.com`, direct from Google, super-admin `admin@tcgsouq.com` | **Decided and live** — 17 Sep 2026. Tenant up, MX/DKIM/SPF/DMARC verified live. Porkbun email forwarding is therefore *not* used; they collide at the MX |
 | D4 | Customer-facing short links stay on `go.pokesouq.com` | Follows from §1 and R2. Confirm when the redirector is built |
 | D5 | Apex forwards 302 to `pokesouq.com` until there is a page worth having | Open, low stakes |
+| D7 | **Credential topology**: ownership and records centralised; credentials grouped by trust boundary, not one for all and not one per repo | **Decided** — 18 Sep 2026, built when the hub build starts. Full reasoning and the target shape in §3b |
 | D6 | **One Workspace super-admin for now.** A break-glass second admin inside the tenant is the structural fix and is deferred until the owner is ready | **Decided** — 18 Sep 2026. Deliberate, not an oversight. See `README.md` §1b for what makes it survivable and what the residual risk is |
