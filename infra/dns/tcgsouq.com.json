@@ -16,51 +16,40 @@
     {
       "name": "",
       "type": "TXT",
-      "content": "v=spf1 include:_spf.google.com ~all",
-      "status": "blocked",
-      "blocked_on": "Google Workspace signup (decision D3, decided 17 Sep 2026). Goes in together with the MX records the Admin console shows.",
-      "purpose": "Authorise Google's servers to send as tcgsouq.com, and soft-fail everything else."
+      "content": "google-site-verification=c0IXUW4_AQ5oX9sy9GgQYclE8MsMNdDHrMl1hqHlU7o",
+      "status": "ready",
+      "purpose": "Google's proof that we control the domain. Deleting it can un-verify the Workspace tenant, so it is tracked rather than treated as setup litter."
+    },
+    {
+      "name": "",
+      "type": "MX",
+      "content": "smtp.google.com",
+      "prio": 1,
+      "status": "ready",
+      "purpose": "Google's current single-record MX for Workspace. Added 17 Sep 2026 from the values the Admin console showed."
+    },
+    {
+      "name": "google._domainkey",
+      "type": "TXT",
+      "content": "v=DKIM1;k=rsa;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAivFBV6bN00mghJjja9H7xq7+iGr/+ilsLe7pGjChy7UHcaj5GfnV2fi6PAGSYxdiOL80lahjnPAhVIjxgDDBTwITnPh5ci7UDD7Zk+6Kbqqv7wURQ+l6LkPGrGNHvDDsZ5NaNxRwB5alTDPNgO7zUNdxC+Xm3XYw51OGLBYXojKAyGSyzbIpDhwF31nQu8RnAj2/OjLi/XdEQ1DySW3W4StkxhKJox0lrYG4hKvW8og8bTT2+390wStB+CF76Aw/jlQmuF5ICh4NqJScrvhY/nyFGiTlPp5vdsr7vDd5WCpuf/vqXkbztxUTQAs6ABKuddsyRf1n/i8bhFCSPSGoJwIDAQAB",
+      "status": "ready",
+      "purpose": "DKIM, 2048-bit (verified: 294-byte DER key). The public half of the key - publishing it here means the verifier notices if it is ever rotated away or dropped."
     },
     {
       "name": "_dmarc",
       "type": "TXT",
       "content": "v=DMARC1; p=none; rua=mailto:dmarc@tcgsouq.com",
-      "status": "blocked",
-      "blocked_on": "Google Workspace signup - rua needs a real mailbox ON this domain (RFC 7489 s7.1: an external rua address requires an authorisation record on ITS domain, which we cannot publish on gmail.com).",
-      "purpose": "Start at p=none and collect reports.",
-      "revisit": "After ~2 weeks of clean reports, climb p=none -> p=quarantine -> p=reject."
-    },
-    {
-      "name": "",
-      "type": "MX",
-      "content": "(use the records Google's Admin console shows at setup)",
-      "status": "blocked",
-      "blocked_on": "Google Workspace signup. Never transcribe MX values from documentation - Google has changed its recommended set before.",
-      "purpose": "Deliver mail for tcgsouq.com to Workspace."
-    },
-    {
-      "name": "google._domainkey",
-      "type": "TXT",
-      "content": "(generated in Admin console: Apps > Gmail > Authenticate email, 2048-bit)",
-      "status": "blocked",
-      "blocked_on": "Google Workspace signup, and the key must be generated there first.",
-      "purpose": "DKIM signing, without which DMARC alignment rests on SPF alone."
+      "status": "ready",
+      "purpose": "Collect reports before enforcing.",
+      "revisit": "~1 Oct 2026: if the reports show only Google sending and passing, climb p=none -> p=quarantine -> p=reject."
     },
     {
       "name": "",
       "type": "TXT",
-      "content": "v=spf1 -all",
-      "status": "blocked",
-      "blocked_on": "STOPGAP, mutually exclusive with the Workspace SPF above. Publish this pair ONLY if Workspace slips more than ~2 weeks, and delete it before Workspace sends its first message - -all plus p=reject rejects every mail the business sends.",
-      "purpose": "Refuse forgeries while the domain genuinely sends no mail."
-    },
-    {
-      "name": "_dmarc",
-      "type": "TXT",
-      "content": "v=DMARC1; p=reject; adkim=s; aspf=s",
-      "status": "blocked",
-      "blocked_on": "STOPGAP, pairs with the -all SPF above. Same warning: replace before Workspace mail flows.",
-      "purpose": "Reject forgeries while the domain genuinely sends no mail."
+      "content": "v=spf1 include:_spf.google.com ~all",
+      "status": "ready",
+      "purpose": "Authorise Google to send as tcgsouq.com.",
+      "note": "LIVE VALUE DIFFERS: the zone currently ends -all (hard fail), not ~all. Google's own guidance is ~all, because SPF breaks on forwarding - the forwarding server's IP is never in the record - and -all invites receivers to reject legitimately forwarded mail outright. DKIM survives forwarding, so DMARC still catches real forgeries. -all also hard-rejects any future third-party sender until SPF is updated. The verifier flags this deliberately until it is changed or this manifest is corrected to match a deliberate choice."
     },
     {
       "name": "codex",
@@ -119,12 +108,6 @@
   "verification_records": {
     "note": "Values come from each platform's console and are pasted in when that platform is set up. Never guess them.",
     "pending": [
-      {
-        "name": "",
-        "type": "TXT",
-        "for": "Google Workspace / Search Console domain verification",
-        "repo": "tcgsouq-finance, tcgsouq-social"
-      },
       {
         "name": "",
         "type": "TXT",
