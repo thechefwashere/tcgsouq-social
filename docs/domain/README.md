@@ -78,11 +78,26 @@ defaults.
 | Recovery email | `admin@pokesouq.com` — deliberately **on a different domain**, so recovery never depends on the domain being recovered |
 | Google Cloud organisation | **`tcgsouq.com`, created 18 Sep 02:27**, with `admin@tcgsouq.com` as Organization Administrator |
 
-**The open risk: one user, one super-admin.** Every factor except the backup codes and the
-recovery email lives on a single handset — authenticator, 2SV SMS and recovery phone are the
-same number. The backup codes are the only factor independent of that device, which is why
-they belong somewhere physical rather than on the phone or the laptop. A second super-admin
-is the structural fix and costs another licence; it is an open decision, not an oversight.
+**One super-admin, accepted deliberately (charter D6, 18 Sep 2026).** A second super-admin
+inside the tenant — never used day to day, its own factor on a different device — is the
+structural fix, and it is deferred, not overlooked. Do not "fix" this without asking.
+
+What makes it survivable rather than reckless:
+
+- 2SV with an authenticator app, plus SMS, plus 10 backup codes.
+- The recovery email is on a **different domain** (`admin@pokesouq.com`), so recovery never
+  depends on the domain being recovered.
+- The backup codes are held **offline on a physical USB**, not in any cloud account. Worth a
+  second copy that does not travel, since a keychain and a phone are usually lost together —
+  and note that backup codes replace the second factor, not the password, so a found stick is
+  half a credential rather than a way in.
+- **Domain control is the real backstop.** Google's ultimate recovery path for a tenant is
+  proving ownership of the domain with a DNS TXT record, and as of 17 Sep that zone is ours
+  outright. Before the delegation moved, this decision would have been considerably worse.
+
+The residual risk is concentration: the authenticator, the 2SV SMS number and the recovery
+phone are all the same handset. Losing it falls back to the USB codes and the recovery
+mailbox.
 
 **Two Cloud defaults left deliberately alone:**
 

@@ -123,3 +123,4 @@ to be edited during the riskiest week of the migration.
 | D3 | Google Workspace on `tcgsouq.com`, direct from Google, super-admin `admin@tcgsouq.com` | **Decided and live** — 17 Sep 2026. Tenant up, MX/DKIM/SPF/DMARC verified live. Porkbun email forwarding is therefore *not* used; they collide at the MX |
 | D4 | Customer-facing short links stay on `go.pokesouq.com` | Follows from §1 and R2. Confirm when the redirector is built |
 | D5 | Apex forwards 302 to `pokesouq.com` until there is a page worth having | Open, low stakes |
+| D6 | **One Workspace super-admin for now.** A break-glass second admin inside the tenant is the structural fix and is deferred until the owner is ready | **Decided** — 18 Sep 2026. Deliberate, not an oversight. See `README.md` §1b for what makes it survivable and what the residual risk is |
