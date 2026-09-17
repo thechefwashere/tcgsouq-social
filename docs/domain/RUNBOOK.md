@@ -178,6 +178,35 @@ From `research/registrar-options.md`, which reached these conclusions before the
   material-change notice **but does not impose a 60-day transfer lock** — unlike the Domain.com
   behaviour the research warned about. Still worth doing after the transfer, not during.
 - Registry locks `clientTransferProhibited` and `clientDeleteProhibited` are already set.
+- **DNSSEC** (Porkbun: *Registry DNSSEC*, 0 records as of 17 Sep). Worth enabling now that the
+  domain carries business mail: it signs the zone so a resolver can detect forged answers,
+  and with Porkbun serving the DNS they manage the keys and push the DS record to the
+  registry themselves, which removes the usual way people break it.
+  **The one rule that comes with it: disable DNSSEC *before* ever changing nameservers
+  again.** A DS record at the registry that no longer matches the zone's keys makes the
+  domain unresolvable to every validating resolver — not degraded, dark — and mail stops with
+  it. That is the whole risk, and it only bites during a nameserver move.
+
+### Settings deliberately left alone
+
+| Setting | Why not |
+|---|---|
+| **API access** | Off is the right default. It grants nothing by itself, but there is nothing to automate yet — turn it on when a batch of records needs applying (the Railway hostnames), then off again |
+| **Park domain** | Parking serves an ad page. Never on a business domain |
+| **Email hosting** | Would set its own MX and fight Workspace |
+| **Web hosting / SSL** | Nothing is hosted at Porkbun; Vercel and Railway issue their own certificates for the hostnames that will exist |
+| **Glue records** | Only needed when running your own nameservers on the domain |
+| **Cloudflare connect** | That is the hand-the-zone-to-Cloudflare path. Decision D1 chose Porkbun; the option stays available |
+| **URL forwarding** | Only once decision D5 is settled |
+
+### A note on the registrant contact
+
+The research recommended moving registrar contacts off a personal address to a role mailbox.
+Now that `admin@tcgsouq.com` exists it is tempting — but **do not point the registrar contact
+for `tcgsouq.com` at an address on `tcgsouq.com`**. If the domain's DNS or mail ever breaks,
+the registrar's notices about that breakage cannot reach you. A personal address, or one on a
+different domain the business controls, is the safer choice precisely because it does not
+depend on the thing it is used to recover.
 
 ---
 
