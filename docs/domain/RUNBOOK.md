@@ -41,12 +41,19 @@ different story — it carries the live Shopify records — and is *not* touched
    ```
    The delegation line goes from `WRONG` to `OK`.
 
-**What you may see afterwards.** Porkbun may populate the new zone with its own default
-records (a parking page). That is normal and harmless. Leave them; `dns_sync.py` lists records
-it does not manage rather than deleting them, and the apex forward in step 4 replaces them
-anyway.
+**What actually happened, 17 Sep 2026 20:55 UTC.** The registry accepted the change within
+two minutes, and Porkbun brought the zone up **empty** — no default parking records, nothing
+to clean up. An NXDOMAIN probe returned an SOA from `curitiba.ns.porkbun.com`, which is the
+proof that Porkbun is authoritative rather than that a resolver happens to agree.
 
-**Timing.** The registry updates within minutes. Resolvers that already cached the old
+**Timing, observed.** The registry updated within minutes and one public resolver had the new
+delegation immediately, while another was still serving the old one — and the apex kept
+answering Domain.com's parking IP `208.91.197.27` from cache for another hour or so, on the
+old record's 7200-second TTL. That is cache, not failure: `dns_verify.py` asks every resolver
+and prints `PROP` when they disagree, precisely so a stale-but-successful answer cannot be
+mistaken for the real state.
+
+**Timing, in general.** The registry updates within minutes. Resolvers that already cached the old
 delegation keep it until their copy expires — usually minutes to a couple of hours, worst
 case up to 48 hours for the `.com` parent TTL. Nothing breaks while both answer, because
 neither zone serves anything yet.

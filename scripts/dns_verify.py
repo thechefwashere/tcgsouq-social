@@ -15,7 +15,8 @@ should be updated to say so.
 """
 import argparse, json, os, sys, urllib.parse, urllib.request
 
-RESOLVERS = ["https://dns.google/resolve", "https://cloudflare-dns.com/dns-query"]
+RESOLVERS = [("google", "https://dns.google/resolve"),
+             ("cloudflare", "https://cloudflare-dns.com/dns-query")]
 TIMEOUT = 20
 
 GREEN, RED, YELLOW, DIM, RESET = "\033[32m", "\033[31m", "\033[33m", "\033[2m", "\033[0m"
@@ -24,23 +25,28 @@ if not sys.stdout.isatty() or os.environ.get("NO_COLOR"):
 
 
 def resolve(name, rtype):
-    """Return the list of answer strings for name/rtype, or None if the lookup failed."""
-    last = None
-    for base in RESOLVERS:
+    """Ask every resolver and return {resolver: [answers]}, skipping ones that failed.
+
+    Every resolver is asked, not just the first that answers, because during a nameserver
+    cutover they disagree - one still serving a cached delegation while another already has
+    the new one. A single resolver cannot tell "not published" from "not propagated yet",
+    and that is precisely the question you have at a cutover.
+    """
+    out = {}
+    for label, base in RESOLVERS:
         url = f"{base}?{urllib.parse.urlencode({'name': name, 'type': rtype})}"
         req = urllib.request.Request(url, headers={"Accept": "application/dns-json"})
         try:
             with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
                 data = json.load(r)
-        except Exception as exc:  # noqa: BLE001 - any failure means try the next resolver
-            last = exc
+        except Exception as exc:  # noqa: BLE001 - a resolver that fails is simply not counted
+            print(f"  ! {label} lookup failed for {name} {rtype}: {exc}", file=sys.stderr)
             continue
         if data.get("Status") not in (0, 3):  # 0 NOERROR, 3 NXDOMAIN (a real answer: nothing)
-            last = RuntimeError(f"resolver status {data.get('Status')}")
             continue
-        return [a["data"] for a in data.get("Answer", []) if _type_name(a.get("type")) == rtype]
-    print(f"  ! lookup failed for {name} {rtype}: {last}", file=sys.stderr)
-    return None
+        out[label] = [a["data"] for a in data.get("Answer", [])
+                      if _type_name(a.get("type")) == rtype]
+    return out
 
 
 _TYPES = {1: "A", 2: "NS", 5: "CNAME", 15: "MX", 16: "TXT", 28: "AAAA", 257: "CAA"}
@@ -89,22 +95,25 @@ def main():
     results, failures = [], 0
 
     want_ns = sorted(n.rstrip(".").lower() for n in manifest.get("nameservers", []))
-    got_ns_raw = resolve(domain, "NS")
-    got_ns = sorted(norm(n, "NS") for n in (got_ns_raw or []))
-    ns_ok = bool(got_ns) and got_ns == want_ns
-    if not ns_ok:
+    per_ns = {r: sorted(norm(n, "NS") for n in v) for r, v in resolve(domain, "NS").items()}
+    agree = [r for r, v in per_ns.items() if v == want_ns]
+    ns_ok = bool(per_ns) and len(agree) == len(per_ns)
+    if not agree:
         failures += 1
-    results.append({"check": "delegation", "name": domain, "type": "NS",
-                    "ok": ns_ok, "want": want_ns, "got": got_ns, "status": "ready"})
+    results.append({"check": "delegation", "name": domain, "type": "NS", "ok": ns_ok,
+                    "propagating": bool(agree) and not ns_ok, "want": want_ns,
+                    "by_resolver": per_ns, "status": "ready"})
 
     for rec in manifest["records"]:
         name, rtype = rec.get("name", ""), rec["type"]
         want = norm(rec["content"], rtype)
-        got = [norm(g, rtype) for g in (resolve(fqdn(name, domain), rtype) or [])]
-        present = want in got
+        per = {r: [norm(g, rtype) for g in v] for r, v in resolve(fqdn(name, domain), rtype).items()}
+        seen = [r for r, v in per.items() if want in v]
+        present = bool(per) and len(seen) == len(per)
         entry = {"check": "record", "name": fqdn(name, domain), "type": rtype,
-                 "status": rec["status"], "want": want, "got": got, "ok": present}
-        if rec["status"] == "ready" and not present:
+                 "status": rec["status"], "want": want, "by_resolver": per,
+                 "ok": present, "propagating": bool(seen) and not present}
+        if rec["status"] == "ready" and not seen:
             failures += 1
         results.append(entry)
 
@@ -115,23 +124,39 @@ def main():
     print(f"\n{domain} - live DNS vs {args.manifest}\n")
     for r in results:
         if r["check"] == "delegation":
-            mark = f"{GREEN}OK  {RESET}" if r["ok"] else f"{RED}WRONG{RESET}"
-            print(f"  {mark} delegation  NS -> {', '.join(r['got']) or '(none)'}")
+            if r["ok"]:
+                mark = f"{GREEN}OK   {RESET}"
+            elif r.get("propagating"):
+                mark = f"{YELLOW}PROP {RESET}"
+            else:
+                mark = f"{RED}WRONG{RESET}"
+            print(f"  {mark} delegation  NS")
+            for res, vals in r["by_resolver"].items():
+                hit = "=" if vals == r["want"] else "!"
+                print(f"       {DIM}{hit} {res:<11}{RESET} {', '.join(vals) or '(none)'}")
             if not r["ok"]:
-                print(f"       {DIM}expected {', '.join(r['want'])}{RESET}")
+                print(f"       {DIM}  want       {', '.join(r['want'])}{RESET}")
             continue
         if r["status"] == "ready":
-            mark = f"{GREEN}OK  {RESET}" if r["ok"] else f"{RED}MISSING{RESET}"
+            mark = (f"{GREEN}OK   {RESET}" if r["ok"]
+                    else f"{YELLOW}PROP {RESET}" if r.get("propagating") else f"{RED}MISS {RESET}")
         else:
-            mark = f"{YELLOW}LIVE{RESET}" if r["ok"] else f"{DIM}blocked{RESET}"
+            mark = f"{YELLOW}LIVE {RESET}" if r["ok"] or r.get("propagating") else f"{DIM}blkd {RESET}"
         label = f"{r['name']} {r['type']}"
-        print(f"  {mark} {label:<34} {r['want'][:60]}")
-        if r["status"] == "ready" and not r["ok"] and r["got"]:
-            print(f"       {DIM}found instead: {', '.join(r['got'])[:90]}{RESET}")
-        if r["status"] != "ready" and r["ok"]:
+        print(f"  {mark} {label:<34} {r['want'][:58]}")
+        if r.get("propagating"):
+            for res, vals in r["by_resolver"].items():
+                print(f"       {DIM}{'=' if r['want'] in vals else '!'} {res:<11}"
+                      f"{', '.join(vals)[:70] or '(none)'}{RESET}")
+        if r["status"] != "ready" and (r["ok"] or r.get("propagating")):
             print(f"       {DIM}now live - update its status in the manifest{RESET}")
 
-    print(f"\n  {failures} check(s) failing\n" if failures else "\n  all ready records match\n")
+    if failures:
+        print(f"\n  {failures} check(s) failing\n")
+    elif any(r.get("propagating") for r in results):
+        print("\n  matches where it has propagated; PROP lines are caches still catching up\n")
+    else:
+        print("\n  all ready records match\n")
     return 1 if failures else 0
 
 
