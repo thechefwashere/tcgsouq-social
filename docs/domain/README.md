@@ -43,9 +43,17 @@ same evening: `admin@tcgsouq.com` is the super-admin, MX is Google's current sin
 form, DKIM is confirmed 2048-bit from the DER key length, and DMARC sits at `p=none` while
 reports accumulate. `dns_verify.py` reports all five records `OK` on both public resolvers.
 
-**One thing left open on the mail side:** the DMARC `rua` points at `dmarc@tcgsouq.com`, which
-needs to exist as an alias before any report can land. Until it does, the policy is valid but
-nothing is being collected, and the climb to `p=reject` would be blind.
+**Authentication is confirmed end to end**, not merely published: a message from
+`admin@tcgsouq.com` to an external mailbox on 18 Sep 02:08 +04 came back `spf=pass`
+(209.85.220.41), `dkim=pass header.i=@tcgsouq.com header.s=google`, `dmarc=pass (p=NONE)`.
+That distinction matters — correct DNS records and unsigned outbound mail look identical from
+the outside, and DKIM signing only starts when **Start authentication** is pressed in the
+Admin console, which publishing the key does not do.
+
+**One thing left open on the mail side:** DMARC is deliberately still at `p=none`. The `rua`
+alias now exists, so reports can accumulate; around **1 Oct** they should be read and the
+policy climbed to `p=quarantine` and then `p=reject`. Until that happens the domain is
+authenticated but not yet defended — a forgery still gets delivered.
 
 **`pokesouq.com` is still at Newfold, and there is a dated reason not to let that drift.**
 Verisign raises the `.com` wholesale price on **1 November 2026**; a transfer-in adds a year

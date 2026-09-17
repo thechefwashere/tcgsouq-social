@@ -120,6 +120,10 @@ That is the exact mistake that left `admin@pokesouq.com` without super-admin on 
    seconds", a `@mail.gmail.com` Message-ID) so Gmail shows no auth rows at all. That looks
    like a failure and is not one. Externally delivered, you want `spf=pass` and `dkim=pass`.
 
+**Verified 18 Sep 2026, 02:08 +04:** `admin@tcgsouq.com` → an external mailbox returned
+`spf=pass` (209.85.220.41), `dkim=pass header.i=@tcgsouq.com header.s=google`, and
+`dmarc=pass (p=NONE)`. The chain works.
+
 **Undo:** the Workspace trial can be cancelled; the DNS records are deletable. Nothing else in
 the family depends on this yet.
 
