@@ -30,16 +30,22 @@ DNS-over-HTTPS. Re-check any of it with `python3 scripts/dns_verify.py`.
 | Transferred | **2026-09-17 20:17 UTC** | not yet |
 | Expires | **2036-03-27** (paid ~10 years out) | 2027-06-14 |
 | Registry locks | `clientDeleteProhibited`, `clientTransferProhibited` | `clientTransferProhibited` |
-| Nameservers | **`NS1/NS2.DOMAIN.COM`** — still Domain.com | `NS1/NS2.DOMAIN.COM` |
-| Apex A | `208.91.197.27` (Domain.com parking) | `23.227.38.65` (Shopify) |
-| MX / TXT | none | Shopify `www` CNAME → `shops.myshopify.com` |
+| Nameservers | **Porkbun's four**, switched 20:55 UTC | `NS1/NS2.DOMAIN.COM` |
+| Apex A | none — the zone came up empty | `23.227.38.65` (Shopify) |
+| MX | **`smtp.google.com`** (Workspace, live 21:1x UTC) | — |
+| TXT | site-verification, SPF, DMARC, DKIM — all verified live | Shopify `www` CNAME → `shops.myshopify.com` |
 
-Two things follow, and they are the whole of the near-term plan:
+**The delegation and the mail layer both landed on 17 Sep**, within the hour after the
+transfer. Porkbun is authoritative — proved by an NXDOMAIN probe returning an SOA from
+`curitiba.ns.porkbun.com`, not merely by a resolver agreeing — and the zone came up empty,
+with no default parking records to clear out. Google Workspace on `tcgsouq.com` followed the
+same evening: `admin@tcgsouq.com` is the super-admin, MX is Google's current single-record
+form, DKIM is confirmed 2048-bit from the DER key length, and DMARC sits at `p=none` while
+reports accumulate. `dns_verify.py` reports all five records `OK` on both public resolvers.
 
-**The registrar moved; the DNS did not.** Porkbun is the registrar of record, but the zone is
-still answered by Domain.com's nameservers, so nothing can be added to `tcgsouq.com` from the
-Porkbun dashboard or its API until the delegation is switched. This is one screen, five
-minutes, and it is the prerequisite for everything else here — see `RUNBOOK.md` step 1.
+**One thing left open on the mail side:** the DMARC `rua` points at `dmarc@tcgsouq.com`, which
+needs to exist as an alias before any report can land. Until it does, the policy is valid but
+nothing is being collected, and the climb to `p=reject` would be blind.
 
 **`pokesouq.com` is still at Newfold, and there is a dated reason not to let that drift.**
 Verisign raises the `.com` wholesale price on **1 November 2026**; a transfer-in adds a year
@@ -185,11 +191,11 @@ scope them to `tcgsouq.com`.
 
 ## 6. Order of work
 
-1. Switch the nameservers to Porkbun; wait for propagation; `dns_verify.py` goes green on
-   delegation. **Nothing else can start before this.**
-2. Google Workspace on tcgsouq.com, direct from Google, and its records (verification TXT,
-   MX, DKIM) plus the SPF/DMARC pair above — all of it inside the Porkbun zone, which is why
-   step 1 comes first.
+1. ~~Switch the nameservers to Porkbun.~~ **Done 17 Sep, 20:55 UTC.**
+2. ~~Google Workspace on tcgsouq.com, direct from Google, plus its records.~~ **Done 17 Sep**,
+   same evening. Remaining: create the `dmarc@` and `accounts@` aliases, send a test message
+   and confirm `spf=pass` / `dkim=pass` in the headers, and around **1 Oct** read the reports
+   and climb DMARC to `p=quarantine` then `p=reject`.
 3. `admin@tcgsouq.com` added as a second owner/admin on the platform accounts that carry a
    7-day hold (Business Profile, Play Console, Apple, Shopify staff, Supabase). Costs nothing,
    and the clocks are then long spent.
@@ -200,6 +206,7 @@ scope them to `tcgsouq.com`.
 
 ## 7. What this doc deliberately does not do
 
-No DNS record has been created, no nameserver changed, no account touched. Everything above is
-a plan plus the tooling to execute it; the registrar work needs the owner's login, and the
-owner's standing preference is to align before anything visible or structural changes.
+Everything executed so far was done by the owner at the registrar and in Google's console;
+this repo holds the plan, the record of what is live, and the tooling that checks it. Nothing
+here reaches into the store, and no customer-facing URL has changed or will without the
+sign-off §3 and the charter both call for.

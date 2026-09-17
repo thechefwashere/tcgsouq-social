@@ -118,8 +118,8 @@ to be edited during the riskiest week of the migration.
 
 | | Decision | Status |
 |---|---|---|
-| D1 | DNS hosted on Porkbun's own nameservers | **Decided** — 17 Sep 2026 |
+| D1 | DNS hosted on Porkbun's own nameservers | **Decided and live** — delegation switched 17 Sep 2026, 20:55 UTC |
 | D2 | `hub.` and `inbox.` as separate subdomains, shared cookie on `.tcgsouq.com` | Open — needs the Supabase cookie-storage check first |
-| D3 | Google Workspace on `tcgsouq.com`, direct from Google, super-admin `admin@tcgsouq.com` | **Decided** — 17 Sep 2026. Porkbun email forwarding is therefore *not* used; they collide at the MX |
+| D3 | Google Workspace on `tcgsouq.com`, direct from Google, super-admin `admin@tcgsouq.com` | **Decided and live** — 17 Sep 2026. Tenant up, MX/DKIM/SPF/DMARC verified live. Porkbun email forwarding is therefore *not* used; they collide at the MX |
 | D4 | Customer-facing short links stay on `go.pokesouq.com` | Follows from §1 and R2. Confirm when the redirector is built |
 | D5 | Apex forwards 302 to `pokesouq.com` until there is a page worth having | Open, low stakes |
