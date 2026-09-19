@@ -48,25 +48,42 @@ one hand-refreshed number. Not a pipeline.
 
 ## 3. Data model
 
-Lives in the shared Supabase project, in an `ops` schema alongside `shared` and `social`.
+**Built on the capture layer, not beside it.** `db/migrations/0001_capture_layer.sql` already
+provides more of this than the first draft of this spec assumed, and its modelling is better
+in places. What already exists, and must not be duplicated:
 
-| Table | Holds | Notes |
+| Already there | Does |
+|---|---|
+| `connections` | Credential **pointers** — `secret_ref`, `scopes`, `expires_at`, `last_ok_at`, `last_error`, `status`. The registry rule of §6 is already enforced in its design: *"Secrets are never stored here."* |
+| `accounts` | One row per connected account. A second Instagram is a row, not a schema change |
+| `store_state` | Open / password / maintenance / partial-stockout as a `tstzrange`, with a GiST exclusion constraint so two states cannot overlap. **The Jul–Sep closure is already seeded**, with the honest note that the exact open days were never recorded |
+| `shopify_daily_trading` | A view that removes closed periods from `shopify_daily`. The BASELINE lesson enforced as a view rather than left to discipline |
+| `ingest_runs` | Per-job history: running / ok / partial / failed, rows written, error. Health over time, not just a current flag |
+
+So `connection_checks` from the first draft is unnecessary — `connections.status` plus
+`ingest_runs` already cover current state and history respectively. And the timeline does not
+need its own store-state rows; it reads `store_state`.
+
+**What is genuinely missing**, and is all `0002_ops_hub.sql` adds:
+
+| Table | Holds | Why it does not exist yet |
 |---|---|---|
-| `projects` | id, slug, name, kind (`app`/`service`/`store`/`data`/`integration`), status (`live`/`building`/`dormant`/`retired`), repo, url, summary | The nine-ish things: PokeSouq store, FairDrop, PackProof, Codex, curation, social hub, WhatsApp, finance, the domain itself |
-| `connections` | id, platform, label, scopes[], `secret_location` (which environment holds the runtime copy), `vault_ref` (the password-manager entry name), `rotate_url`, issued_at, expires_at, notes | **Never a secret value.** See §6 |
-| `project_connections` | project ↔ connection, `intended_access` (`read`/`write`), note | The map, and the basis for drift detection |
-| `connection_checks` | connection_id, checked_at, ok, detail, latency_ms | Health history, not just current state |
-| `events` | occurred_at, ended_at (nullable), kind (`milestone`/`store_state`/`launch`/`incident`/`decision`/`planned`), title, detail, project_id (nullable), source | The timeline. `ended_at` exists so "locked 17 Jul – 7 Sep" is one row, not two |
-| `session_log` | session_id, at, project_id, kind (`change`/`finding`/`decision`/`deferral`), summary, refs[] | Written by Claude sessions. See §5 |
-| `deviations` | connection_id or project_id, rule (e.g. `D7`), what, why, mitigations, fix, opened_at, closed_at | §6 — there is already one |
+| `projects` | slug, name, kind, status (`live`/`building`/`scoping`/`dormant`/`retired`), repo, url, summary, `blocked_on` | Nothing models the projects themselves — the capture layer models *accounts and data*, not the things being built |
+| `project_connections` | project ↔ `connections` / `accounts`, `intended_access` | The map, and the basis for drift detection |
+| `events` | `during tstzrange`, kind (`milestone`/`launch`/`incident`/`decision`/`planned`), title, detail, project | `store_state` covers one kind of interval. Milestones, launches and planned work have nowhere to live |
+| `deviations` | rule (e.g. `D7`), what, why, mitigations, fix, opened_at, closed_at | Makes a recorded deviation queryable rather than prose-only. There is already one |
+| `session_log` | session_id, at, project, kind, summary, refs | What a session did, so the next one does not have to re-read a transcript |
+| `timeline` (view) | `events` ∪ `store_state`, one shape | So the store-state series appears in the timeline without being copied into it |
 
-Two design rules worth stating:
+Following the capture layer's conventions throughout: every instant `timestamptz`, intervals
+as `tstzrange`, natural keys so a re-run repairs rather than duplicates, and no secret values.
 
-- **`events` carries ranges, not just points.** The store-state series is the single most
-  valuable thing in the table and it is made of intervals.
-- **`connection_checks` is append-only.** A source that breaks looks exactly like a source
-  that is quiet; only a history of successful checks distinguishes them. This is the same
-  reasoning as `ingest_runs` in the capture layer, and it should reuse that pattern.
+**One trap the UI must not walk into, found by actually running the seed.** The owner is
+UTC+4 and the database is not. The closure stored as starting `2026-07-17 00:00+04` renders
+as **16 July** to anything reading it in UTC — every date a day early, silently, and on the
+one series whose dates carry the most meaning. The timeline must convert to `Asia/Dubai` for
+display. `db/tests/0002_ops_hub_test.sql` asserts this so a regression fails the build
+rather than quietly shifting history.
 
 ## 4. Views
 
