@@ -119,9 +119,22 @@ What gets centralised:
 - **A registry.** Every credential recorded: which app, which scopes, which repo consumes it,
   where the secret lives, when it was last rotated. This is the gap that has already cost
   something — a Shopify token sits in plaintext in a spreadsheet cell, a legacy custom app
-  called "OTO" runs PackProof, and nobody is certain whether they are the same token. That is
+  called "OTO" runs PackProof, and it was not certain whether they are the same token. That is
   a bookkeeping failure, not a credential design failure, and one shared credential would not
   have prevented it.
+
+  **Resolved, 19 Sep 2026 — they are three separate apps, so necessarily three separate
+  tokens.** Enumerated from the live store via `appInstallations`. The store carries exactly
+  three admin-created (`developerType: MERCHANT`) apps:
+
+  | App | Shopify app id | Runs |
+  |---|---|---|
+  | Finance Extract | `289436598273` | the bookkeeping Google Sheet — its token is the one in the spreadsheet cell |
+  | OTO | `118100295681` | PackProof |
+  | PokeSouq FairDrop | `53014134785` | the FairDrop app |
+
+  Distinct app ids mean distinct access tokens: rotating one cannot break the others. The
+  registry gap the paragraph above describes is real, but this particular fear is not.
 
 What does **not** get shared — one credential across everything:
 
@@ -145,6 +158,24 @@ The shape to build:
 **Status: agreed, not built.** It is implemented when the hub build starts and the Dev
 Dashboard apps are actually created — not before, since creating credentials ahead of the
 code that uses them only adds things to rotate.
+
+**Known deviation, live since 14 Sep 2026 — the hub runs on the finance app's token.** The
+capture layer in this repo authenticates to Shopify with the **Finance Extract** token, the
+same one the bookkeeping Sheet uses. It was chosen deliberately and with the owner's
+agreement, before this section existed: Shopify no longer permits new admin-created custom
+apps, that app already held read access to everything, and the alternative was blocking the
+build on a Dev Dashboard app nobody had yet worked out how to issue.
+
+It is nonetheless exactly the arrangement §3b argues against, and the specific costs apply:
+the hub holds finance-shaped scopes it does not need, and rotating that token to protect the
+spreadsheet would silently stop the nightly capture. Two mitigations are in place — the hub's
+client refuses to send any mutation regardless of what the token permits
+(`src/lib/shopify.js`), and the token is read-only in practice — but neither is the fix.
+
+**The fix is the one §3b already names:** when the Dev Dashboard app for the hub is created,
+point `SHOPIFY_ADMIN_TOKEN` at it and leave Finance Extract to finance alone. Recorded here
+rather than carried in someone's head, because a deviation nobody wrote down is how the OTO
+uncertainty above happened in the first place.
 
 ## 4. What the rebrand will and will not change
 
