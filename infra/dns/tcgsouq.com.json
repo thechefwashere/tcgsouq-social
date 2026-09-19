@@ -1,0 +1,125 @@
+{
+  "domain": "tcgsouq.com",
+  "registrar": "porkbun",
+  "dns_host": "porkbun",
+  "doc": "docs/domain/README.md",
+  "nameservers": [
+    "curitiba.ns.porkbun.com",
+    "fortaleza.ns.porkbun.com",
+    "maceio.ns.porkbun.com",
+    "salvador.ns.porkbun.com"
+  ],
+  "defaults": {
+    "ttl": 600
+  },
+  "records": [
+    {
+      "name": "",
+      "type": "TXT",
+      "content": "google-site-verification=c0IXUW4_AQ5oX9sy9GgQYclE8MsMNdDHrMl1hqHlU7o",
+      "status": "ready",
+      "purpose": "Google's proof that we control the domain. Deleting it can un-verify the Workspace tenant, so it is tracked rather than treated as setup litter."
+    },
+    {
+      "name": "",
+      "type": "MX",
+      "content": "smtp.google.com",
+      "prio": 1,
+      "status": "ready",
+      "purpose": "Google's current single-record MX for Workspace. Added 17 Sep 2026 from the values the Admin console showed."
+    },
+    {
+      "name": "google._domainkey",
+      "type": "TXT",
+      "content": "v=DKIM1;k=rsa;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAivFBV6bN00mghJjja9H7xq7+iGr/+ilsLe7pGjChy7UHcaj5GfnV2fi6PAGSYxdiOL80lahjnPAhVIjxgDDBTwITnPh5ci7UDD7Zk+6Kbqqv7wURQ+l6LkPGrGNHvDDsZ5NaNxRwB5alTDPNgO7zUNdxC+Xm3XYw51OGLBYXojKAyGSyzbIpDhwF31nQu8RnAj2/OjLi/XdEQ1DySW3W4StkxhKJox0lrYG4hKvW8og8bTT2+390wStB+CF76Aw/jlQmuF5ICh4NqJScrvhY/nyFGiTlPp5vdsr7vDd5WCpuf/vqXkbztxUTQAs6ABKuddsyRf1n/i8bhFCSPSGoJwIDAQAB",
+      "status": "ready",
+      "purpose": "DKIM, 2048-bit (verified: 294-byte DER key). The public half of the key - publishing it here means the verifier notices if it is ever rotated away or dropped."
+    },
+    {
+      "name": "_dmarc",
+      "type": "TXT",
+      "content": "v=DMARC1; p=none; rua=mailto:dmarc@tcgsouq.com",
+      "status": "ready",
+      "purpose": "Collect reports before enforcing.",
+      "revisit": "~1 Oct 2026: if the reports show only Google sending and passing, climb p=none -> p=quarantine -> p=reject."
+    },
+    {
+      "name": "",
+      "type": "TXT",
+      "content": "v=spf1 include:_spf.google.com ~all",
+      "status": "ready",
+      "purpose": "Authorise Google to send as tcgsouq.com.",
+      "note": "LIVE VALUE DIFFERS: the zone currently ends -all (hard fail), not ~all. Google's own guidance is ~all, because SPF breaks on forwarding - the forwarding server's IP is never in the record - and -all invites receivers to reject legitimately forwarded mail outright. DKIM survives forwarding, so DMARC still catches real forgeries. -all also hard-rejects any future third-party sender until SPF is updated. The verifier flags this deliberately until it is changed or this manifest is corrected to match a deliberate choice."
+    },
+    {
+      "name": "codex",
+      "type": "CNAME",
+      "content": "cname.vercel-dns.com",
+      "status": "blocked",
+      "blocked_on": "Add codex.tcgsouq.com as a domain on the Vercel project tcgsouq-codex FIRST. DNS pointed at Vercel for a domain Vercel does not know about serves a 404 and issues no certificate.",
+      "purpose": "Codex curation app, today on tcgsouq-codex.vercel.app.",
+      "repo": "tcgsouq-codex"
+    },
+    {
+      "name": "hub",
+      "type": "CNAME",
+      "content": "<railway-target>.up.railway.app",
+      "status": "blocked",
+      "blocked_on": "Railway service for tcgsouq-social must exist. Railway issues a PER-DOMAIN CNAME target and a TXT challenge - read both off the Railway dashboard; the CNAME alone returns 404.",
+      "purpose": "Social hub UI.",
+      "repo": "tcgsouq-social"
+    },
+    {
+      "name": "inbox",
+      "type": "CNAME",
+      "content": "<railway-target>.up.railway.app",
+      "status": "blocked",
+      "blocked_on": "Railway service for tcgsouq-whatsapp must exist (same per-domain CNAME + TXT rule as hub).",
+      "purpose": "WhatsApp inbox PWA. Its own subdomain rather than hub/chat - see docs/domain/README.md, decision D2.",
+      "repo": "tcgsouq-whatsapp"
+    },
+    {
+      "name": "go",
+      "type": "CNAME",
+      "content": "<railway-target>.up.railway.app",
+      "status": "blocked",
+      "blocked_on": "Short-link domain decision (D4) - go.tcgsouq.com vs keeping customer-facing links on go.pokesouq.com until the rebrand.",
+      "purpose": "Short-link redirector for UTM'd links in posts and broadcasts.",
+      "repo": "tcgsouq-social"
+    },
+    {
+      "name": "api",
+      "type": "CNAME",
+      "content": "<railway-target>.up.railway.app",
+      "status": "blocked",
+      "blocked_on": "PackProof backend is not deployed - the Railway trial ended and was not upgraded.",
+      "purpose": "PackProof backend (Shopify orders -> Drive proof uploads).",
+      "repo": "packproof-backend"
+    },
+    {
+      "name": "",
+      "type": "CAA",
+      "content": "0 issue \"letsencrypt.org\"",
+      "status": "blocked",
+      "blocked_on": "Add only AFTER the first certificates issue, listing the issuers actually observed. A CAA record that omits a live issuer silently breaks certificate renewal weeks later - the classic footgun.",
+      "purpose": "Restrict which CAs may issue for tcgsouq.com."
+    }
+  ],
+  "verification_records": {
+    "note": "Values come from each platform's console and are pasted in when that platform is set up. Never guess them.",
+    "pending": [
+      {
+        "name": "",
+        "type": "TXT",
+        "for": "Meta business domain verification",
+        "repo": "tcgsouq-social"
+      },
+      {
+        "name": "_railway",
+        "type": "TXT",
+        "for": "Railway custom-domain challenge (one per domain)",
+        "repo": "tcgsouq-social, tcgsouq-whatsapp"
+      }
+    ]
+  }
+}

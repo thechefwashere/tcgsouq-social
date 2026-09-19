@@ -8,6 +8,19 @@ Status: **scoping**. No application code yet. The plan, research and alignment p
 live in `thechefwashere/tcgsouq-shopify` under `docs/social-hub/`. The sibling repo
 `tcgsouq-whatsapp` owns everything WhatsApp.
 
+## docs/domain — tcgsouq.com
+
+`docs/domain/` is the canonical record for the domain this repo family is named after: what
+is verified true about it today, which hostname serves what, the decisions still open, and
+the registrar runbook. The zone itself is data in `infra/dns/tcgsouq.com.json`.
+
+```
+python3 scripts/dns_verify.py     what public DNS actually returns vs the manifest (no credentials)
+python3 scripts/dns_sync.py       plan the manifest against Porkbun; --apply writes
+```
+
+The hub's own hostnames (`hub.`, `go.`) and the platform verification records live there too.
+
 ## docs/platform — the ground rules
 
 `docs/platform/` holds a dated snapshot of the official documentation and policies of every
