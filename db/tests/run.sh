@@ -23,7 +23,7 @@ done
 
 for f in "$ROOT"/db/tests/*_test.sql; do
   echo "==> running $(basename "$f")"
-  psql -h "$TMP" -p "$PORT" -U runner -d postgres -v ON_ERROR_STOP=1 -f "$f"
+  psql -h "$TMP" -p "$PORT" -U runner -d postgres -v ON_ERROR_STOP=1 -v root="$ROOT" -f "$f"
 done
 
 echo "OK"
